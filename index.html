@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo - Parque del Pueblo Neza</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .tab-btn {
+            background-color: #1b5e20;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .tab-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .tab-btn.active {
+            background-color: #4caf50;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 1rem;
+        }
+
+        .tab-content {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .map-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .map-container {
+                flex-direction: row;
+            }
+        }
+
+        canvas {
+            background-color: #e8f5e9;
+            border: 2px solid #81c784;
+            border-radius: 8px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .info-panel {
+            background-color: #f1f8e9;
+            border: 1px solid #c5e1a5;
+            border-radius: 8px;
+            padding: 1rem;
+            min-width: 250px;
+            max-width: 100%;
+        }
+
+        .info-panel h3 {
+            color: #33691e;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #aed581;
+            padding-bottom: 0.5rem;
+        }
+
+        .list-container {
+            margin-top: 1rem;
+        }
+
+        .facilities-list {
+            list-style: none;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .facilities-list li {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .facilities-list li:hover {
+            background-color: #f1f8e9;
+        }
+
+        .facilities-list .number {
+            background-color: #4caf50;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .animal-card {
+            background-color: #f1f8e9;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .animal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .animal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .animal-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+        }
+
+        .animal-info {
+            flex: 1;
+        }
+
+        .animal-card h3 {
+            font-size: 1.2rem;
+            color: #33691e;
+            margin-bottom: 0.25rem;
+        }
+
+        .animal-card p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .animal-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .animal-detail {
+            background-color: #e8f5e9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #2e7d32;
+        }
+
+        footer {
+            background-color: #2e7d32;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        .highlight {
+            background-color: #c8e6c9;
+        }
+
+        .zone-tooltip {
+            position: absolute;
+            background-color: rgba(46, 125, 50, 0.9);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            z-index: 100;
+            max-width: 200px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f1f8e9;
+            border-radius: 8px;
+            border: 1px solid #c5e1a5;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .search-box {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            width: 100%;
+            border: 1px solid #c5e1a5;
+            border-radius: 4px;
+        }
+
+        .animal-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #4caf50;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Parque del Pueblo - Nezahualcóyotl</h1>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="mapa">Mapa</button>
+            <button class="tab-btn" data-tab="instalaciones">Instalaciones</button>
+            <button class="tab-btn" data-tab="animales">Animales</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="tab-content active" id="mapa">
+            <div class="map-container">
+                <div>
+                    <canvas id="parkMap" width="800" height="600"></canvas>
+                    <div class="legend" id="mapLegend">
+                        <h3>Leyenda</h3>
+                        <div id="legendItems" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                    </div>
+                </div>
+                <div id="infoPanel" class="info-panel">
+                    <h3>Información</h3>
+                    <p>Selecciona una zona del parque para ver detalles</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="instalaciones">
+            <h2>Instalaciones del Parque</h2>
+            <input type="text" class="search-box" id="facilitySearch" placeholder="Buscar instalación...">
+            <div class="list-container">
+                <ul class="facilities-list" id="facilitiesList">
+                    <!-- Se llenará dinámicamente -->
+                </ul>
+            </div>
+        </div>
+
+        <div class="tab-content" id="animales">
+            <h2>Animales del Parque</h2>
+            <input type="text" class="search-box" id="animalSearch" placeholder="Buscar animal...">
+            <div class="list-container">
+                <div class="animals-grid" id="animalsGrid">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Mapa Interactivo del Parque del Pueblo - Nezahualcóyotl © 2025</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manejo de pestañas
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    
+                    // Desactivar todas las pestañas
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Activar la pestaña seleccionada
+                    button.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // Configuración del canvas para el mapa
+            const canvas = document.getElementById('parkMap');
+            const ctx = canvas.getContext('2d');
+            const infoPanel = document.getElementById('infoPanel');
+            const facilitiesList = document.getElementById('facilitiesList');
+            const animalsGrid = document.getElementById('animalsGrid');
+            const legendItems = document.getElementById('legendItems');
+            
+            // Definir instalaciones del parque (basado exactamente en la imagen)
+            const parkFacilities = [
+                // Fila superior (1-19)
+                { id: 1, name: "Papión", x: 100, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 2, name: "Jirafa", x: 140, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 3, name: "Elefante", x: 180, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 4, name: "Tigre", x: 220, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 5, name: "Cebra", x: 260, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 6, name: "Gacela", x: 300, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 7, name: "Lince", x: 340, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 8, name: "Zorro", x: 380, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 9, name: "Mapache", x: 420, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 10, name: "Hipopótamo", x: 460, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 11, name: "Nutria", x: 500, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 12, name: "Nocturno", x: 540, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 13, name: "Avestruz", x: 580, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 14, name: "Flamenco", x: 620, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 15, name: "Chimpancé", x: 660, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 16, name: "Rinoceronte", x: 700, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 17, name: "Águila", x: 740, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 18, name: "Búho", x: 780, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 19, name: "Guacamayo", x: 820, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                
+                // Fila inferior (20-37)
+                { id: 20, name: "Pabellón", x: 100, y: 150, radius: 15, color: "#795548", type: "servicio" },
+                { id: 21, name: "Leopardo", x: 140, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 22, name: "Cocodrilo", x: 180, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 23, name: "Mono", x: 220, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 24, name: "Tigre Blanco", x: 260, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 25, name: "Mapache", x: 300, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 26, name: "Canguro", x: 340, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 27, name: "Lobo", x: 380, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 28, name: "Oso Panda", x: 420, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 29, name: "Jaguar", x: 460, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 30, name: "Acuario", x: 500, y: 150, radius: 15, color: "#1e88e5", type: "agua" },
+                { id: 31, name: "Cafetería", x: 540, y: 150, radius: 15, color: "#795548", type: "servicio" },
+                { id: 32, name: "Baños", x: 580, y: 150, radius: 15, color: "#607d8b", type: "servicio" },
+                { id: 33, name: "Área de Picnic", x: 620, y: 150, radius: 15, color: "#43a047", type: "recreacion" },
+                { id: 34, name: "Aviario", x: 660, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: 35, name: "Jardín Botánico", x: 700, y: 150, radius: 15, color: "#8bc34a", type: "naturaleza" },
+                { id: 36, name: "Entrada Principal", x: 740, y: 150, radius: 15, color: "#e53935", type: "acceso" },
+                { id: 37, name: "Estacionamiento", x: 780, y: 150, radius: 15, color: "#9e9e9e", type: "servicio" }
+            ];
+
+            // Ubicaciones en el mapa real (basado en la imagen)
+            const mapLocations = [
+                // Estas son las ubicaciones reales en el mapa según la imagen
+                { id: 1, x: 150, y: 480 },
+                { id: 2, x: 180, y: 460 },
+                { id: 3, x: 220, y: 500 },
+                { id: 4, x: 250, y: 450 },
+                { id: 5, x: 280, y: 480 },
+                { id: 6, x: 320, y: 460 },
+                { id: 7, x: 350, y: 430 },
+                { id: 8, x: 380, y: 450 },
+                { id: 9, x: 410, y: 420 },
+                { id: 10, x: 440, y: 450 },
+                { id: 11, x: 470, y: 420 },
+                { id: 12, x: 500, y: 450 },
+                { id: 13, x: 530, y: 420 },
+                { id: 14, x: 560, y: 450 },
+                { id: 15, x: 590, y: 420 },
+                { id: 16, x: 620, y: 450 },
+                { id: 17, x: 650, y: 420 },
+                { id: 18, x: 680, y: 450 },
+                { id: 19, x: 710, y: 420 },
+                { id: 20, x: 150, y: 300 },
+                { id: 21, x: 180, y: 320 },
+                { id: 22, x: 210, y: 280 },
+                { id: 23, x: 240, y: 320 },
+                { id: 24, x: 270, y: 280 },
+                { id: 25, x: 300, y: 320 },
+                { id: 26, x: 330, y: 280 },
+                { id: 27, x: 360, y: 320 },
+                { id: 28, x: 390, y: 280 },
+                { id: 29, x: 420, y: 320 },
+                { id: 30, x: 450, y: 280 },
+                { id: 31, x: 480, y: 320 },
+                { id: 32, x: 510, y: 280 },
+                { id: 33, x: 540, y: 320 },
+                { id: 34, x: 570, y: 280 },
+                { id: 35, x: 600, y: 320 },
+                { id: 36, x: 630, y: 280 },
+                { id: 37, x: 660, y: 320 }
+            ];
+
+            // Definir animales del parque con información detallada
+            const parkAnimals = [
+                { 
+                    id: 1, 
+                    name: "Papión", 
+                    icon: "🐒", 
+                    facilityId: 1,
+                    scientificName: "Papio hamadryas",
+                    habitat: "Sabanas y bosques abiertos",
+                    diet: "Omnívoro (frutas, semillas, insectos)",
+                    lifespan: "25-30 años",
+                    description: "Primate de tamaño mediano con hocico alargado similar a un perro. Los machos son considerablemente más grandes que las hembras y tienen un pelaje más largo en el cuello y hombros."
+                },
+                { 
+                    id: 2, 
+                    name: "Jirafa", 
+                    icon: "🦒", 
+                    facilityId: 2,
+                    scientificName: "Giraffa camelopardalis",
+                    habitat: "Sabanas africanas",
+                    diet: "Herbívoro (hojas de árboles, principalmente acacias)",
+                    lifespan: "20-25 años",
+                    description: "El animal terrestre más alto del mundo, con un cuello extremadamente largo que le permite alimentarse de las copas de los árboles. Cada jirafa tiene un patrón de manchas único, como las huellas dactilares en humanos."
+                },
+                { 
+                    id: 3, 
+                    name: "Elefante", 
+                    icon: "🐘", 
+                    facilityId: 3,
+                    scientificName: "Loxodonta africana",
+                    habitat: "Sabanas y bosques africanos",
+                    diet: "Herbívoro (hierbas, cortezas, frutas)",
+                    lifespan: "60-70 años",
+                    description: "El mamífero terrestre más grande del mundo. Posee una trompa prensil que utiliza para alimentarse, beber y comunicarse. Sus colmillos de marfil son incisivos modificados que crecen durante toda su vida."
+                },
+                { 
+                    id: 4, 
+                    name: "Tigre", 
+                    icon: "🐅", 
+                    facilityId: 4,
+                    scientificName: "Panthera tigris",
+                    habitat: "Selvas y bosques asiáticos",
+                    diet: "Carnívoro (ungulados, ciervos, jabalíes)",
+                    lifespan: "10-15 años en estado salvaje",
+                    description: "El felino más grande del mundo. Cada tigre tiene un patrón único de rayas que actúa como camuflaje en la vegetación densa. Son excelentes nadadores y pueden cruzar ríos de varios kilómetros de ancho."
+                },
+                { 
+                    id: 5, 
+                    name: "Cebra", 
+                    icon: "🦓", 
+                    facilityId: 5,
+                    scientificName: "Equus quagga",
+                    habitat: "Sabanas y praderas africanas",
+                    diet: "Herbívoro (hierbas y plantas)",
+                    lifespan: "20-30 años",
+                    description: "Conocida por su distintivo patrón de rayas blancas y negras. Cada cebra tiene un patrón único que ayuda a confundir a los depredadores y a regular su temperatura corporal. Viven en manadas para protegerse de los depredadores."
+                },
+                { 
+                    id: 6, 
+                    name: "Gacela", 
+                    icon: "🦌", 
+                    facilityId: 6,
+                    scientificName: "Gazella dorcas",
+                    habitat: "Sabanas y desiertos africanos",
+                    diet: "Herbívoro (hierbas, arbustos)",
+                    lifespan: "10-12 años",
+                    description: "Conocida por su elegancia y velocidad, puede alcanzar hasta 80 km/h en carrera. Posee cuernos en forma de lira y un cuerpo esbelto adaptado para la carrera. Es presa habitual de grandes felinos."
+                },
+                { 
+                    id: 7, 
+                    name: "Lince", 
+                    icon: "🐆", 
+                    facilityId: 7,
+                    scientificName: "Lynx lynx",
+                    habitat: "Bosques templados y boreales",
+                    diet: "Carnívoro (roedores, liebres, aves)",
+                    lifespan: "10-15 años",
+                    description: "Felino mediano reconocible por sus orejas puntiagudas con mechones negros y su cola corta. Es un cazador solitario y territorial, principalmente activo durante el crepúsculo y la noche."
+                },
+                { 
+                    id: 8, 
+                    name: "Zorro", 
+                    icon: "🦊", 
+                    facilityId: 8,
+                    scientificName: "Vulpes vulpes",
+                    habitat: "Muy adaptable: bosques, praderas, montañas, desiertos",
+                    diet: "Omnívoro (pequeños mamíferos, aves, frutas, insectos)",
+                    lifespan: "2-5 años en estado salvaje",
+                    description: "Conocido por su astucia e inteligencia. Tiene un hocico alargado, orejas triangulares y una cola espesa. Es principalmente nocturno y crepuscular, y puede adaptarse a diversos hábitats, incluyendo zonas urbanas."
+                },
+                { 
+                    id: 9, 
+                    name: "Mapache", 
+                    icon: "🦝", 
+                    facilityId: 9,
+                    scientificName: "Procyon lotor",
+                    habitat: "Bosques cercanos a cursos de agua",
+                    diet: "Omnívoro (frutas, nueces, insectos, pequeños vertebrados)",
+                    lifespan: "2-3 años en estado salvaje",
+                    description: "Reconocible por su máscara facial negra y su cola anillada. Tiene manos muy hábiles que usa para manipular alimentos y objetos. Es principalmente nocturno y se ha adaptado bien a entornos urbanos."
+                },
+                { 
+                    id: 10, 
+                    name: "Hipopótamo", 
+                    icon: "🦛", 
+                    facilityId: 10,
+                    scientificName: "Hippopotamus amphibius",
+                    habitat: "Ríos y lagos africanos",
+                    diet: "Herbívoro (hierbas)",
+                    lifespan: "40-50 años",
+                    description: "A pesar de su apariencia tranquila, es uno de los animales más peligrosos de África. Pasa la mayor parte del día sumergido en el agua para mantenerse fresco y sale por la noche a pastar. Puede abrir su boca en un ángulo de 150 grados."
+                },
+                { 
+                    id: 11, 
+                    name: "Nutria", 
+                    icon: "🦦", 
+                    facilityId: 11,
+                    scientificName: "Lutra lutra",
+                    habitat: "Ríos, lagos y costas",
+                    diet: "Carnívoro (peces, crustáceos, anfibios)",
+                    lifespan: "8-10 años",
+                    description: "Excelente nadadora con un cuerpo hidrodinámico y patas palmeadas. Tiene un pelaje denso e impermeable que la protege del frío. Es juguetona y sociable, y utiliza herramientas como piedras para romper conchas."
+                },
+                { 
+                    id: 12, 
+                    name: "Nocturno", 
+                    icon: "🦉", 
+                    facilityId: 12,
+                    scientificName: "Strix aluco",
+                    habitat: "Bosques y áreas arboladas",
+                    diet: "Carnívoro (pequeños mamíferos, aves, insectos)",
+                    lifespan: "15-20 años",
+                    description: "Ave rapaz nocturna con excelente visión y audición. Sus ojos están fijos en sus órbitas, por lo que gira toda la cabeza para mirar en diferentes direcciones. Puede girar su cabeza hasta 270 grados."
+                },
+                { 
+                    id: 13, 
+                    name: "Avestruz", 
+                    icon: "🦢", 
+                    facilityId: 13,
+                    scientificName: "Struthio camelus",
+                    habitat: "Sabanas y desiertos africanos",
+                    diet: "Omnívoro (plantas, insectos, pequeños vertebrados)",
+                    lifespan: "40-45 años",
+                    description: "El ave más grande y pesada del mundo, incapaz de volar pero excelente corredora (hasta 70 km/h). Tiene ojos grandes y largas pestañas para protegerse del polvo y la arena. Pone los huevos más grandes de cualquier ave terrestre."
+                },
+                { 
+                    id: 14, 
+                    name: "Flamenco", 
+                    icon: "🦩", 
+                    facilityId: 14,
+                    scientificName: "Phoenicopterus roseus",
+                    habitat: "Lagos salinos y lagunas costeras",
+                    diet: "Omnívoro (crustáceos, algas, pequeños invertebrados)",
+                    lifespan: "20-30 años",
+                    description: "Ave zancuda conocida por su color rosa, que obtiene de los carotenoides presentes en su dieta. Se alimenta con la cabeza invertida, filtrando el agua con su pico especializado. Suele pararse sobre una sola pata para conservar calor corporal."
+                },
+                { 
+                    id: 15, 
+                    name: "Chimpancé", 
+                    icon: "🐵", 
+                    facilityId: 15,
+                    scientificName: "Pan troglodytes",
+                    habitat: "Bosques tropicales y sabanas de África",
+                    diet: "Omnívoro (frutas, hojas, insectos, pequeños mamíferos)",
+                    lifespan: "40-50 años",
+                    description: "El pariente vivo más cercano a los humanos, compartiendo el 98.6% de nuestro ADN. Es altamente inteligente, capaz de usar herramientas y tiene una compleja estructura social. Puede aprender lenguaje de señas y comunicarse con humanos."
+                },
+                { 
+                    id: 16, 
+                    name: "Rinoceronte", 
+                    icon: "🦏", 
+                    facilityId: 16,
+                    scientificName: "Ceratotherium simum",
+                    habitat: "Sabanas y praderas africanas",
+                    diet: "Herbívoro (hierbas)",
+                    lifespan: "40-50 años",
+                    description: "Reconocible por sus cuernos característicos hechos de queratina compactada. A pesar de su gran tamaño, puede correr a velocidades de hasta 55 km/h. Tiene una piel gruesa y arrugada que actúa como armadura natural."
+                },
+                { 
+                    id: 17, 
+                    name: "Águila", 
+                    icon: "🦅", 
+                    facilityId: 17,
+                    scientificName: "Aquila chrysaetos",
+                    habitat: "Montañas, bosques y llanuras abiertas",
+                    diet: "Carnívoro (mamíferos medianos, aves, carroña)",
+                    lifespan: "20-30 años",
+                    description: "Ave rapaz con excelente visión, capaz de detectar presas a 3 km de distancia. Tiene garras poderosas y un pico fuerte y curvado para desgarrar carne. Construye nidos enormes en acantilados o árboles altos."
+                },
+                { 
+                    id: 18, 
+                    name: "Búho", 
+                    icon: "🦉", 
+                    facilityId: 18,
+                    scientificName: "Bubo bubo",
+                    habitat: "Bosques, montañas y desiertos",
+                    diet: "Carnívoro (roedores, aves, insectos)",
+                    lifespan: "15-20 años",
+                    description: "Ave rapaz nocturna con ojos grandes orientados hacia adelante que le proporcionan visión binocular. Su vuelo es silencioso gracias a adaptaciones especiales en sus plumas. Puede girar su cabeza hasta 270 grados."
+                },
+                { 
+                    id: 19, 
+                    name: "Guacamayo", 
+                    icon: "🦜", 
+                    facilityId: 19,
+                    scientificName: "Ara macao",
+                    habitat: "Selvas tropicales de América Central y del Sur",
+                    diet: "Herbívoro (frutas, nueces, semillas)",
+                    lifespan: "50-60 años",
+                    description: "Ave tropical de colores brillantes con un pico fuerte y curvado capaz de romper nueces duras. Es altamente inteligente y social, formando parejas de por vida. Puede imitar sonidos y algunas palabras humanas."
+                },
+                { 
+                    id: 20, 
+                    name: "Oso", 
+                    icon: "🐻", 
+                    facilityId: 28,
+                    scientificName: "Ursus arctos",
+                    habitat: "Bosques, montañas y tundra",
+                    diet: "Omnívoro (bayas, raíces, peces, mamíferos)",
+                    lifespan: "20-30 años",
+                    description: "Mamífero grande con un excelente sentido del olfato, hasta 7 veces mejor que el de un perro. A pesar de su tamaño, puede correr a velocidades de hasta 55 km/h. Hiberna durante el invierno en regiones frías."
+                },
+                { 
+                    id: 21, 
+                    name: "Leopardo", 
+                    icon: "🐆", 
+                    facilityId: 21,
+                    scientificName: "Panthera pardus",
+                    habitat: "Sabanas, bosques y montañas de África y Asia",
+                    diet: "Carnívoro (ungulados, primates, roedores)",
+                    lifespan: "12-17 años en estado salvaje",
+                    description: "Felino ágil y poderoso, conocido por su capacidad para trepar árboles y llevar presas varias veces su peso a las ramas. Su patrón de manchas le proporciona un excelente camuflaje. Es principalmente solitario y territorial."
+                },
+                { 
+                    id: 22, 
+                    name: "Cocodrilo", 
+                    icon: "🐊", 
+                    facilityId: 22,
+                    scientificName: "Crocodylus niloticus",
+                    habitat: "Ríos, lagos y pantanos",
+                    diet: "Carnívoro (peces, aves, mamíferos)",
+                    lifespan: "70-100 años",
+                    description: "Reptil prehistórico con una mordida extremadamente poderosa. Puede permanecer sumergido hasta 2 horas y sobrevivir meses sin comer. Las hembras son madres dedicadas que protegen a sus crías durante varios meses."
+                },
+                { 
+                    id: 23, 
+                    name: "Mono", 
+                    icon: "🐒", 
+                    facilityId: 23,
+                    scientificName: "Macaca mulatta",
+                    habitat: "Bosques tropicales y subtropicales",
+                    diet: "Omnívoro (frutas, semillas, insectos)",
+                    lifespan: "20-30 años",
+                    description: "Primate social e inteligente que vive en grupos jerárquicos. Tiene pulgares oponibles que le permiten manipular objetos con precisión. Es curioso por naturaleza y aprende rápidamente observando a otros."
+                },
+                { 
+                    id: 24, 
+                    name: "Tigre Blanco", 
+                    icon: "🐅", 
+                    facilityId: 24,
+                    scientificName: "Panthera tigris",
+                    habitat: "Bosques y praderas de Asia",
+                    diet: "Carnívoro (ungulados, ciervos, jabalíes)",
+                    lifespan: "10-15 años en estado salvaje",
+                    description: "Variante genética rara del tigre de Bengala, no es una subespecie separada. Su coloración blanca se debe a un gen recesivo. En la naturaleza, esta coloración es desventajosa para la caza, por lo que son extremadamente raros en estado salvaje."
+                },
+                { 
+                    id: 25, 
+                    name: "Mapache", 
+                    icon: "🦝", 
+                    facilityId: 25,
+                    scientificName: "Procyon lotor",
+                    habitat: "Bosques cercanos a cursos de agua",
+                    diet: "Omnívoro (frutas, nueces, insectos, pequeños vertebrados)",
+                    lifespan: "2-3 años en estado salvaje",
+                    description: "Mamífero nocturno con distintiva máscara facial y cola anillada. Tiene manos extremadamente sensibles y hábiles que utiliza para 'lavar' su comida antes de comerla. Es altamente adaptable y ha prosperado en entornos urbanos."
+                },
+                { 
+                    id: 26, 
+                    name: "Canguro", 
+                    icon: "🦘", 
+                    facilityId: 26,
+                    scientificName: "Macropus rufus",
+                    habitat: "Llanuras y zonas áridas de Australia",
+                    diet: "Herbívoro (hierbas, arbustos)",
+                    lifespan: "15-20 años",
+                    description: "Marsupial conocido por su forma de desplazamiento a saltos y su bolsa ventral donde desarrolla a sus crías. Puede saltar hasta 9 metros de longitud y 3 metros de altura. Utiliza su potente cola como contrapeso y como quinta extremidad."
+                },
+                { 
+                    id: 27, 
+                    name: "Lobo", 
+                    icon: "🐺", 
+                    facilityId: 27,
+                    scientificName: "Canis lupus",
+                    habitat: "Bosques, tundra, montañas y praderas",
+                    diet: "Carnívoro (ungulados, roedores, carroña)",
+                    lifespan: "6-8 años en estado salvaje",
+                    description: "Cánido social que vive en manadas con una estructura jerárquica compleja. Es un cazador cooperativo con excelente resistencia, capaz de recorrer grandes distancias. Su aullido puede escucharse hasta 10 km de distancia."
+                },
+                { 
+                    id: 28, 
+                    name: "Oso Panda", 
+                    icon: "🐼", 
+                    facilityId: 33,
+                    scientificName: "Ailuropoda melanoleuca",
+                    habitat: "Bosques de bambú en montañas de China",
+                    diet: "Herbívoro (99% bambú)",
+                    lifespan: "20-30 años",
+                    description: "A pesar de pertenecer al orden de los carnívoros, su dieta consiste casi exclusivamente de bambú. Tiene un 'sexto dedo' (un hueso de la muñeca modificado) que utiliza para sujetar el bambú. Pasa 10-16 horas al día comiendo."
+                },
+                { 
+                    id: 29, 
+                    name: "Jaguar", 
+                    icon: "🐆", 
+                    facilityId: 29,
+                    scientificName: "Panthera onca",
+                    habitat: "Selvas tropicales y pantanos de América",
+                    diet: "Carnívoro (caimanes, capibaras, tapires)",
+                    lifespan: "12-15 años en estado salvaje",
+                    description: "El felino más grande de América y el tercero más grande del mundo. Tiene la mordida más potente entre los felinos, capaz de perforar cráneos y caparazones de tortugas. Es un excelente nadador y trepa árboles con facilidad."
+                },
+                { 
+                    id: 30, 
+                    name: "Acuario", 
+                    icon: "🐠", 
+                    facilityId: 30,
+                    scientificName: "Varias especies",
+                    habitat: "Ecosistemas acuáticos recreados",
+                    diet: "Varía según especies",
+                    lifespan: "Varía según especies",
+                    description: "Exhibición que alberga diversas especies acuáticas en ambientes controlados que recrean sus hábitats naturales. Incluye peces tropicales, corales, crustáceos y otras formas de vida acuática de diferentes regiones del mundo."
+                }
+            ];
+
+            // Definir áreas principales del parque (basado en la imagen)
+            const parkAreas = [
+                { 
+                    name: "Lago Central", 
+                    type: "agua", 
+                    path: [
+                        { x: 400, y: 350 },
+                        { x: 450, y: 300 },
+                        { x: 500, y: 350 },
+                        { x: 450, y: 400 }
+                    ],
+                    color: "#b3e5fc"
+                },
+                { 
+                    name: "Área Circular", 
+                    type: "recreacion", 
+                    center: { x: 200, y: 200 },
+                    radius: 80,
+                    color: "#c8e6c9"
+                },
+                { 
+                    name: "Jardín Botánico", 
+                    type: "naturaleza", 
+                    path: [
+                        { x: 600, y: 200 },
+                        { x: 650, y: 250 },
+                        { x: 600, y: 300 },
+                        { x: 550, y: 250 }
+                    ],
+                    color: "#dcedc8"
+                }
+            ];
+
+            // Definir caminos principales (basado en la imagen)
+            const mainPaths = [
+                // Camino central horizontal
+                { points: [
+                    { x: 100, y: 350 },
+                    { x: 700, y: 350 }
+                ]},
+                // Camino vertical izquierdo
+                { points: [
+                    { x: 200, y: 100 },
+                    { x: 200, y: 500 }
+                ]},
+                // Camino vertical derecho
+                { points: [
+                    { x: 600, y: 100 },
+                    { x: 600, y: 500 }
+                ]},
+                // Camino circular
+                { isCircle: true, center: { x: 200, y: 200 }, radius: 100 },
+                // Caminos adicionales
+                { points: [
+                    { x: 300, y: 200 },
+                    { x: 500, y: 200 }
+                ]},
+                { points: [
+                    { x: 300, y: 400 },
+                    { x: 500, y: 400 }
+                ]}
+            ];
+
+            // Crear leyenda
+            function createLegend() {
+                const types = [
+                    { type: "acceso", color: "#e53935", label: "Accesos" },
+                    { type: "servicio", color: "#607d8b", label: "Servicios" },
+                    { type: "animal", color: "#8bc34a", label: "Animales" },
+                    { type: "recreacion", color: "#43a047", label: "Recreación" },
+                    { type: "naturaleza", color: "#8bc34a", label: "Naturaleza" },
+                    { type: "agua", color: "#1e88e5", label: "Agua" }
+                ];
+
+                types.forEach(item => {
+                    const legendItem = document.createElement('div');
+                    legendItem.className = 'legend-item';
+                    legendItem.innerHTML = `
+                        <div class="legend-color" style="background-color: ${item.color}"></div>
+                        <span>${item.label}</span>
+                    `;
+                    legendItems.appendChild(legendItem);
+                });
+            }
+
+            // Llenar listas de instalaciones y animales
+            function populateLists() {
+                // Llenar lista de instalaciones
+                parkFacilities.forEach(facility => {
+                    const li = document.createElement('li');
+                    li.setAttribute('data-id', facility.id);
+                    li.innerHTML = `
+                        <span class="number">${facility.id}</span>
+                        <span class="name">${facility.name}</span>
+                    `;
+                    li.addEventListener('click', () => {
+                        showFacilityInfo(facility);
+                        document.querySelector('[data-tab="mapa"]').click();
+                    });
+                    facilitiesList.appendChild(li);
+                });
+
+                // Llenar grid de animales
+                parkAnimals.forEach(animal => {
+                    const card = document.createElement('div');
+                    card.className = 'animal-card';
+                    card.setAttribute('data-id', animal.id);
+                    
+                    // Crear contenido detallado para la tarjeta del animal
+                    card.innerHTML = `
+                        <div class="animal-number">${animal.id}</div>
+                        <div class="animal-header">
+                            <div class="animal-icon">${animal.icon}</div>
+                            <div class="animal-info">
+                                <h3>${animal.name}</h3>
+                                <p><em>${animal.scientificName}</em></p>
+                            </div>
+                        </div>
+                        <p>${animal.description}</p>
+                        <div class="animal-details">
+                            <span class="animal-detail">Hábitat: ${animal.habitat}</span>
+                            <span class="animal-detail">Dieta: ${animal.diet}</span>
+                            <span class="animal-detail">Vida: ${animal.lifespan}</span>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', () => {
+                        const facility = parkFacilities.find(f => f.id === animal.facilityId);
+                        if (facility) {
+                            showFacilityInfo(facility);
+                            document.querySelector('[data-tab="mapa"]').click();
+                        }
+                    });
+                    animalsGrid.appendChild(card);
+                });
+            }
+
+            // Función de búsqueda para instalaciones
+            document.getElementById('facilitySearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.facilities-list li').forEach(item => {
+                    const facilityName = item.querySelector('.name').textContent.toLowerCase();
+                    if (facilityName.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            // Función de búsqueda para animales
+            document.getElementById('animalSearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.animal-card').forEach(card => {
+                    const animalName = card.querySelector('h3').textContent.toLowerCase();
+                    const animalDescription = card.querySelector('p').textContent.toLowerCase();
+                    if (animalName.includes(searchTerm) || animalDescription.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+
+            // Dibujar el mapa
+            function drawMap() {
+                // Limpiar el canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Dibujar fondo verde claro para representar el césped
+                ctx.fillStyle = '#c8e6c9';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Dibujar caminos principales
+                ctx.strokeStyle = '#e0e0e0';
+                ctx.lineWidth = 15;
+                
+                mainPaths.forEach(path => {
+                    if (path.isCircle) {
+                        // Dibujar camino circular
+                        ctx.beginPath();
+                        ctx.arc(path.center.x, path.center.y, path.radius, 0, Math.PI * 2);
+                        ctx.stroke();
+                    } else {
+                        // Dibujar camino recto
+                        ctx.beginPath();
+                        ctx.moveTo(path.points[0].x, path.points[0].y);
+                        
+                        for (let i = 1; i < path.points.length; i++) {
+                            ctx.lineTo(path.points[i].x, path.points[i].y);
+                        }
+                        
+                        ctx.stroke();
+                    }
+                });
+                
+                // Dibujar áreas principales
+                parkAreas.forEach(area => {
+                    ctx.fillStyle = area.color;
+                    
+                    if (area.radius) {
+                        // Área circular
+                        ctx.beginPath();
+                        ctx.arc(area.center.x, area.center.y, area.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (area.path) {
+                        // Área con forma personalizada
+                        ctx.beginPath();
+                        ctx.moveTo(area.path[0].x, area.path[0].y);
+                        for (let i = 1; i < area.path.length; i++) {
+                            ctx.lineTo(area.path[i].x, area.path[i].y);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                });
+                
+                // Dibujar árboles (puntos verdes pequeños)
+                ctx.fillStyle = '#66bb6a';
+                const treePositions = [
+                    {x: 120, y: 150}, {x: 180, y: 120}, {x: 250, y: 180}, {x: 150, y: 250},
+                    {x: 220, y: 280}, {x: 280, y: 220}, {x: 320, y: 150}, {x: 380, y: 180},
+                    {x: 420, y: 220}, {x: 480, y: 150}, {x: 520, y: 180}, {x: 580, y: 220},
+                    {x: 620, y: 150}, {x: 680, y: 180}, {x: 150, y: 380}, {x: 220, y: 420},
+                    {x: 280, y: 480}, {x: 320, y: 420}, {x: 380, y: 480}, {x: 420, y: 420},
+                    {x: 480, y: 480}, {x: 520, y: 420}, {x: 580, y: 480}, {x: 620, y: 420},
+                    {x: 680, y: 480}
+                ];
+                
+                treePositions.forEach(pos => {
+                    const size = Math.random() * 5 + 5;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                // Ubicar instalaciones según el mapa real
+                mapLocations.forEach(location => {
+                    const facility = parkFacilities.find(f => f.id === location.id);
+                    if (facility) {
+                        // Actualizar coordenadas de la instalación
+                        facility.x = location.x;
+                        facility.y = location.y;
+                        
+                        // Dibujar círculo para la instalación
+                        ctx.beginPath();
+                        ctx.arc(facility.x, facility.y, facility.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = facility.color;
+                        ctx.fill();
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                        // Dibujar número de la instalación
+                        ctx.fillStyle = '#fff';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(facility.id, facility.x, facility.y);
+                    }
+                });
+                
+                // Dibujar etiquetas para áreas principales
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                
+                ctx.fillText("Lago Central", 450, 350);
+                ctx.fillText("Área Circular", 200, 200);
+                ctx.fillText("Jardín Botánico", 600, 250);
+            }
+
+            // Mostrar información de la instalación
+            function showFacilityInfo(facility) {
+                // Encontrar animales relacionados con esta instalación
+                const relatedAnimals = parkAnimals.filter(animal => animal.facilityId === facility.id);
+                
+                let animalsList = '';
+                if (relatedAnimals.length > 0) {
+                    animalsList = '<h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Animales en esta zona:</h4><ul style="list-style-type: none; padding-left: 0;">';
+                    relatedAnimals.forEach(animal => {
+                        animalsList += `<li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.5rem; margin-right: 0.5rem;">${animal.icon}</span>
+                            <div>
+                                <strong>${animal.name}</strong> (${animal.id})
+                                <div style="font-size: 0.9rem; color: #555;">${animal.scientificName}</div>
+                            </div>
+                        </li>`;
+                    });
+                    animalsList += '</ul>';
+                }
+                
+                infoPanel.innerHTML = `
+                    <h3>${facility.name}</h3>
+                    <p><strong>Zona #${facility.id}</strong></p>
+                    <p>Tipo: ${getTypeLabel(facility.type)}</p>
+                    <p>Ubicación: Coordenadas (${facility.x}, ${facility.y})</p>
+                    ${animalsList}
+                    <div style="margin-top: 1rem; padding: 0.5rem; background-color: #e8f5e9; border-radius: 4px; font-size: 0.9rem;">
+                        <strong>Nota:</strong> Haz clic en los números del mapa para ver más información sobre cada zona.
+                    </div>
+                `;
+                
+                // Resaltar elementos relacionados
+                highlightRelatedItems(facility);
+            }
+            
+            // Obtener etiqueta para el tipo de instalación
+            function getTypeLabel(type) {
+                const types = {
+                    "acceso": "Acceso",
+                    "servicio": "Servicio",
+                    "animal": "Exhibición de animal",
+                    "recreacion": "Área recreativa",
+                    "naturaleza": "Área natural",
+                    "agua": "Cuerpo de agua"
+                };
+                
+                return types[type] || type;
+            }
+            
+            // Resaltar elementos relacionados
+            function highlightRelatedItems(facility) {
+                // Resaltar en la lista de instalaciones
+                document.querySelectorAll('.facilities-list li').forEach(item => {
+                    item.classList.remove('highlight');
+                    if (parseInt(item.getAttribute('data-id')) === facility.id) {
+                        item.classList.add('highlight');
+                    }
+                });
+                
+                // Resaltar en la lista de animales
+                document.querySelectorAll('.animal-card').forEach(card => {
+                    card.classList.remove('highlight');
+                    const animalId = parseInt(card.getAttribute('data-id'));
+                    const animal = parkAnimals.find(a => a.id === animalId);
+                    if (animal && animal.facilityId === facility.id) {
+                        card.classList.add('highlight');
+                    }
+                });
+            }
+
+            // Detectar clic en instalaciones
+            canvas.addEventListener('click', function(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // Ajustar coordenadas según la escala del canvas
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                const clickX = x * scaleX;
+                const clickY = y * scaleY;
+                
+                // Verificar si el clic fue en alguna instalación
+                for (const facility of parkFacilities) {
+                    const distance = Math.sqrt(
+                        Math.pow(clickX - facility.x, 2) + Math.pow(clickY - facility.y, 2)
+                    );
+                    
+                    if (distance <= facility.radius) {
+                        showFacilityInfo(facility);
+                        break;
+                    }
+                }
+            });
+
+            // Mostrar tooltip al pasar el mouse sobre las instalaciones
+            let tooltip = null;
+            
+            canvas.addEventListener('mousemove', function(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // Ajustar coordenadas según la escala del canvas
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                const mouseX = x * scaleX;
+                const mouseY = y * scaleY;
+                
+                let hoveredFacility = null;
+                
+                // Verificar si el mouse está sobre alguna instalación
+                for (const facility of parkFacilities) {
+                    const distance = Math.sqrt(
+                        Math.pow(mouseX - facility.x, 2) + Math.pow(mouseY - facility.y, 2)
+                    );
+                    
+                    if (distance <= facility.radius) {
+                        hoveredFacility = facility;
+                        break;
+                    }
+                }
+                
+                // Mostrar u ocultar tooltip
+                if (hoveredFacility) {
+                    if (!tooltip) {
+                        tooltip = document.createElement('div');
+                        tooltip.className = 'zone-tooltip';
+                        document.body.appendChild(tooltip);
+                    }
+                    
+                    tooltip.textContent = `${hoveredFacility.id}. ${hoveredFacility.name}`;
+                    tooltip.style.left = `${event.clientX + 10}px`;
+                    tooltip.style.top = `${event.clientY + 10}px`;
+                    tooltip.style.display = 'block';
+                    
+                    canvas.style.cursor = 'pointer';
+                } else {
+                    if (tooltip) {
+                        tooltip.style.display = 'none';
+                    }
+                    
+                    canvas.style.cursor = 'default';
+                }
+            });
+            
+            canvas.addEventListener('mouseout', function() {
+                if (tooltip) {
+                    tooltip.style.display = 'none';
+                }
+            });
+
+            // Inicializar
+            createLegend();
+            populateLists();
+            drawMap();
+        });
+    </script>
+</body>
+</html>
