@@ -98,6 +98,7 @@
             padding: 1rem;
             min-width: 250px;
             max-width: 100%;
+            position: relative;
         }
 
         .info-panel h3 {
@@ -105,6 +106,17 @@
             margin-bottom: 0.5rem;
             border-bottom: 1px solid #aed581;
             padding-bottom: 0.5rem;
+        }
+
+        .info-panel .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #33691e;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
         .list-container {
@@ -209,6 +221,32 @@
             color: #2e7d32;
         }
 
+        .animal-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #4caf50;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .conservation-status {
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            display: inline-block;
+        }
+
         footer {
             background-color: #2e7d32;
             color: white;
@@ -266,20 +304,63 @@
             border-radius: 4px;
         }
 
-        .animal-number {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #4caf50;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
+        .facility-card {
+            background-color: #f1f8e9;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #4caf50;
+        }
+
+        .facility-card h3 {
+            color: #33691e;
+            margin-bottom: 0.5rem;
+        }
+
+        .facility-card p {
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .facility-type {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #2e7d32;
+            margin-top: 0.5rem;
+        }
+
+        .info-section {
+            margin-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 1rem;
+        }
+
+        .info-section h4 {
+            color: #33691e;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .info-box {
+            background-color: #e8f5e9;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .info-box h4 {
+            color: #33691e;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -363,423 +444,573 @@
             const animalsGrid = document.getElementById('animalsGrid');
             const legendItems = document.getElementById('legendItems');
             
-            // Definir instalaciones del parque (basado exactamente en la imagen)
+            // Definir instalaciones del parque
             const parkFacilities = [
-                // Fila superior (1-19)
-                { id: 1, name: "Papión", x: 100, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 2, name: "Jirafa", x: 140, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 3, name: "Elefante", x: 180, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 4, name: "Tigre", x: 220, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 5, name: "Cebra", x: 260, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 6, name: "Gacela", x: 300, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 7, name: "Lince", x: 340, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 8, name: "Zorro", x: 380, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 9, name: "Mapache", x: 420, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 10, name: "Hipopótamo", x: 460, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 11, name: "Nutria", x: 500, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 12, name: "Nocturno", x: 540, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 13, name: "Avestruz", x: 580, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 14, name: "Flamenco", x: 620, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 15, name: "Chimpancé", x: 660, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 16, name: "Rinoceronte", x: 700, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 17, name: "Águila", x: 740, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 18, name: "Búho", x: 780, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 19, name: "Guacamayo", x: 820, y: 100, radius: 15, color: "#8bc34a", type: "animal" },
+                { id: "A", name: "Entrada Av. San Esteban", x: 150, y: 550, radius: 15, color: "#e53935", type: "acceso", 
+                  description: "Entrada principal al parque ubicada sobre la Avenida San Esteban. Cuenta con taquillas, módulo de información y control de acceso." },
                 
-                // Fila inferior (20-37)
-                { id: 20, name: "Pabellón", x: 100, y: 150, radius: 15, color: "#795548", type: "servicio" },
-                { id: 21, name: "Leopardo", x: 140, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 22, name: "Cocodrilo", x: 180, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 23, name: "Mono", x: 220, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 24, name: "Tigre Blanco", x: 260, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 25, name: "Mapache", x: 300, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 26, name: "Canguro", x: 340, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 27, name: "Lobo", x: 380, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 28, name: "Oso Panda", x: 420, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 29, name: "Jaguar", x: 460, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 30, name: "Acuario", x: 500, y: 150, radius: 15, color: "#1e88e5", type: "agua" },
-                { id: 31, name: "Cafetería", x: 540, y: 150, radius: 15, color: "#795548", type: "servicio" },
-                { id: 32, name: "Baños", x: 580, y: 150, radius: 15, color: "#607d8b", type: "servicio" },
-                { id: 33, name: "Área de Picnic", x: 620, y: 150, radius: 15, color: "#43a047", type: "recreacion" },
-                { id: 34, name: "Aviario", x: 660, y: 150, radius: 15, color: "#8bc34a", type: "animal" },
-                { id: 35, name: "Jardín Botánico", x: 700, y: 150, radius: 15, color: "#8bc34a", type: "naturaleza" },
-                { id: 36, name: "Entrada Principal", x: 740, y: 150, radius: 15, color: "#e53935", type: "acceso" },
-                { id: 37, name: "Estacionamiento", x: 780, y: 150, radius: 15, color: "#9e9e9e", type: "servicio" }
+                { id: "B", name: "Entrada Av. Linda Vista", x: 650, y: 550, radius: 15, color: "#e53935", type: "acceso", 
+                  description: "Entrada secundaria ubicada sobre la Avenida Linda Vista. Facilita el acceso desde la zona este de la ciudad." },
+                
+                { id: "C", name: "Cuarentena", x: 100, y: 150, radius: 15, color: "#607d8b", type: "servicio", 
+                  description: "Área restringida donde los animales recién llegados o enfermos son mantenidos en aislamiento para observación y tratamiento médico." },
+                
+                { id: "D", name: "Baños", x: 250, y: 500, radius: 15, color: "#607d8b", type: "servicio", 
+                  description: "Servicios sanitarios públicos con instalaciones para personas con discapacidad. Incluye cambiadores para bebés." },
+                
+                { id: "E", name: "Teatro", x: 350, y: 450, radius: 15, color: "#9c27b0", type: "recreacion", 
+                  description: "Espacio para presentaciones educativas sobre fauna y flora, con capacidad para 200 personas. Se realizan shows diarios sobre conservación." },
+                
+                { id: "F", name: "Clínica", x: 200, y: 200, radius: 15, color: "#f44336", type: "servicio", 
+                  description: "Centro médico veterinario equipado para atender emergencias y realizar procedimientos quirúrgicos a los animales del parque." },
+                
+                { id: "G", name: "Oficinas", x: 300, y: 150, radius: 15, color: "#607d8b", type: "servicio", 
+                  description: "Área administrativa donde se gestionan las operaciones diarias del parque, recursos humanos y programas de conservación." },
+                
+                { id: "H", name: "Cocina", x: 400, y: 150, radius: 15, color: "#795548", type: "servicio", 
+                  description: "Instalación donde se preparan las dietas especializadas para cada especie animal del parque, siguiendo estrictos protocolos nutricionales." },
+                
+                { id: "I", name: "Kiosco", x: 450, y: 350, radius: 15, color: "#795548", type: "servicio", 
+                  description: "Punto de venta de alimentos, bebidas y recuerdos. Ofrece opciones de comida rápida y refrigerios para los visitantes." },
+                
+                { id: "J", name: "Nongo (Área de Fiestas)", x: 550, y: 400, radius: 15, color: "#ff9800", type: "recreacion", 
+                  description: "Espacio designado para celebraciones y eventos privados. Cuenta con mesas, sillas y área de juegos para niños." },
+                
+                { id: "K", name: "Acceso a personal", x: 700, y: 150, radius: 15, color: "#607d8b", type: "servicio", 
+                  description: "Entrada exclusiva para empleados y personal autorizado. Cuenta con sistema de control de acceso y seguridad." },
+                
+                { id: "L", name: "Acceso Servicios", x: 750, y: 250, radius: 15, color: "#607d8b", type: "servicio", 
+                  description: "Entrada para vehículos de servicio, proveedores y mantenimiento. Permite el ingreso de suministros y equipamiento." },
+                
+                { id: "M", name: "Museo", x: 500, y: 200, radius: 15, color: "#9c27b0", type: "recreacion", 
+                  description: "Exhibición educativa sobre biodiversidad, conservación y la historia natural de las especies del parque. Incluye muestras interactivas." },
+                
+                { id: "N", name: "Acceso Rampa", x: 400, y: 550, radius: 15, color: "#e53935", type: "acceso", 
+                  description: "Entrada con accesibilidad universal mediante rampa para personas con movilidad reducida, adultos mayores y familias con carriolas." },
+                
+                { id: "O", name: "Isla", x: 450, y: 300, radius: 25, color: "#1e88e5", type: "agua", 
+                  description: "Formación natural en medio del lago central. Sirve como hábitat para algunas especies de aves y como punto focal paisajístico." }
             ];
-
-            // Ubicaciones en el mapa real (basado en la imagen)
-            const mapLocations = [
-                // Estas son las ubicaciones reales en el mapa según la imagen
-                { id: 1, x: 150, y: 480 },
-                { id: 2, x: 180, y: 460 },
-                { id: 3, x: 220, y: 500 },
-                { id: 4, x: 250, y: 450 },
-                { id: 5, x: 280, y: 480 },
-                { id: 6, x: 320, y: 460 },
-                { id: 7, x: 350, y: 430 },
-                { id: 8, x: 380, y: 450 },
-                { id: 9, x: 410, y: 420 },
-                { id: 10, x: 440, y: 450 },
-                { id: 11, x: 470, y: 420 },
-                { id: 12, x: 500, y: 450 },
-                { id: 13, x: 530, y: 420 },
-                { id: 14, x: 560, y: 450 },
-                { id: 15, x: 590, y: 420 },
-                { id: 16, x: 620, y: 450 },
-                { id: 17, x: 650, y: 420 },
-                { id: 18, x: 680, y: 450 },
-                { id: 19, x: 710, y: 420 },
-                { id: 20, x: 150, y: 300 },
-                { id: 21, x: 180, y: 320 },
-                { id: 22, x: 210, y: 280 },
-                { id: 23, x: 240, y: 320 },
-                { id: 24, x: 270, y: 280 },
-                { id: 25, x: 300, y: 320 },
-                { id: 26, x: 330, y: 280 },
-                { id: 27, x: 360, y: 320 },
-                { id: 28, x: 390, y: 280 },
-                { id: 29, x: 420, y: 320 },
-                { id: 30, x: 450, y: 280 },
-                { id: 31, x: 480, y: 320 },
-                { id: 32, x: 510, y: 280 },
-                { id: 33, x: 540, y: 320 },
-                { id: 34, x: 570, y: 280 },
-                { id: 35, x: 600, y: 320 },
-                { id: 36, x: 630, y: 280 },
-                { id: 37, x: 660, y: 320 }
-            ];
-
+            
             // Definir animales del parque con información detallada
             const parkAnimals = [
                 { 
                     id: 1, 
-                    name: "Papión", 
-                    icon: "🐒", 
-                    facilityId: 1,
-                    scientificName: "Papio hamadryas",
-                    habitat: "Sabanas y bosques abiertos",
-                    diet: "Omnívoro (frutas, semillas, insectos)",
-                    lifespan: "25-30 años",
-                    description: "Primate de tamaño mediano con hocico alargado similar a un perro. Los machos son considerablemente más grandes que las hembras y tienen un pelaje más largo en el cuello y hombros."
+                    name: "Gamo", 
+                    icon: "🦌", 
+                    x: 150, y: 480,
+                    species: "FALLOW",
+                    scientificName: "Dama dama",
+                    habitat: "Bosques caducifolios y praderas",
+                    diet: "Herbívoro (hierbas, hojas, cortezas)",
+                    lifespan: "12-16 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje moteado, astas palmeadas en machos, peso de 40-80 kg",
+                    description: "El gamo es un cérvido de tamaño mediano con un característico pelaje moteado. Los machos desarrollan astas palmeadas que mudan anualmente. Son animales gregarios que viven en grupos separados por sexos, excepto durante la época de reproducción."
                 },
                 { 
                     id: 2, 
-                    name: "Jirafa", 
-                    icon: "🦒", 
-                    facilityId: 2,
-                    scientificName: "Giraffa camelopardalis",
-                    habitat: "Sabanas africanas",
-                    diet: "Herbívoro (hojas de árboles, principalmente acacias)",
-                    lifespan: "20-25 años",
-                    description: "El animal terrestre más alto del mundo, con un cuello extremadamente largo que le permite alimentarse de las copas de los árboles. Cada jirafa tiene un patrón de manchas único, como las huellas dactilares en humanos."
+                    name: "Coyote", 
+                    icon: "🐺", 
+                    x: 180, y: 460,
+                    species: "Canis latrans",
+                    scientificName: "Canis latrans",
+                    habitat: "Muy adaptable: desiertos, praderas, bosques y zonas urbanas",
+                    diet: "Omnívoro (pequeños mamíferos, carroña, frutas, insectos)",
+                    lifespan: "10-14 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje grisáceo-amarillento, orejas puntiagudas, peso de 9-23 kg",
+                    description: "El coyote es un cánido nativo de Norteamérica, altamente adaptable y oportunista. Es más pequeño que el lobo pero más grande que un zorro. Tiene un aullido distintivo y es principalmente crepuscular. Forma parejas monógamas y ambos padres participan en la crianza de los cachorros."
                 },
                 { 
                     id: 3, 
-                    name: "Elefante", 
-                    icon: "🐘", 
-                    facilityId: 3,
-                    scientificName: "Loxodonta africana",
-                    habitat: "Sabanas y bosques africanos",
-                    diet: "Herbívoro (hierbas, cortezas, frutas)",
-                    lifespan: "60-70 años",
-                    description: "El mamífero terrestre más grande del mundo. Posee una trompa prensil que utiliza para alimentarse, beber y comunicarse. Sus colmillos de marfil son incisivos modificados que crecen durante toda su vida."
+                    name: "Guacamaya", 
+                    icon: "🦜", 
+                    x: 220, y: 500,
+                    species: "Ara macao",
+                    scientificName: "Ara macao",
+                    habitat: "Selvas tropicales y subtropicales de América Central y del Sur",
+                    diet: "Frugívoro (frutas, nueces, semillas, néctar)",
+                    lifespan: "50-60 años",
+                    conservationStatus: "Vulnerable (VU)",
+                    characteristics: "Plumaje rojo brillante con alas amarillas y azules, pico grande y curvado",
+                    description: "La guacamaya roja es una de las aves más coloridas del mundo. Posee un plumaje predominantemente rojo con alas tricolores (rojo, amarillo y azul). Es altamente inteligente y social, formando parejas de por vida. Puede imitar sonidos y algunas palabras humanas."
                 },
                 { 
                     id: 4, 
-                    name: "Tigre", 
-                    icon: "🐅", 
-                    facilityId: 4,
-                    scientificName: "Panthera tigris",
-                    habitat: "Selvas y bosques asiáticos",
-                    diet: "Carnívoro (ungulados, ciervos, jabalíes)",
-                    lifespan: "10-15 años en estado salvaje",
-                    description: "El felino más grande del mundo. Cada tigre tiene un patrón único de rayas que actúa como camuflaje en la vegetación densa. Son excelentes nadadores y pueden cruzar ríos de varios kilómetros de ancho."
+                    name: "Gamo", 
+                    icon: "🦌", 
+                    x: 250, y: 450,
+                    species: "FALLOW",
+                    scientificName: "Dama dama",
+                    habitat: "Bosques caducifolios y praderas",
+                    diet: "Herbívoro (hierbas, hojas, cortezas)",
+                    lifespan: "12-16 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje moteado, astas palmeadas en machos, peso de 40-80 kg",
+                    description: "El gamo es un cérvido de tamaño mediano con un característico pelaje moteado. Los machos desarrollan astas palmeadas que mudan anualmente. Son animales gregarios que viven en grupos separados por sexos, excepto durante la época de reproducción."
                 },
                 { 
                     id: 5, 
-                    name: "Cebra", 
-                    icon: "🦓", 
-                    facilityId: 5,
-                    scientificName: "Equus quagga",
-                    habitat: "Sabanas y praderas africanas",
-                    diet: "Herbívoro (hierbas y plantas)",
-                    lifespan: "20-30 años",
-                    description: "Conocida por su distintivo patrón de rayas blancas y negras. Cada cebra tiene un patrón único que ayuda a confundir a los depredadores y a regular su temperatura corporal. Viven en manadas para protegerse de los depredadores."
+                    name: "Lince", 
+                    icon: "🐆", 
+                    x: 280, y: 480,
+                    species: "Lynx rufus",
+                    scientificName: "Lynx rufus",
+                    habitat: "Bosques, desiertos y montañas de Norteamérica",
+                    diet: "Carnívoro (conejos, roedores, aves, reptiles)",
+                    lifespan: "10-15 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Orejas puntiagudas con mechones negros, cola corta, pelaje moteado",
+                    description: "El lince rojo es un felino mediano reconocible por sus orejas puntiagudas con mechones negros y su cola corta. Es un cazador solitario y territorial, principalmente activo durante el crepúsculo y la noche. Tiene excelente visión y audición para detectar presas."
                 },
                 { 
                     id: 6, 
-                    name: "Gacela", 
-                    icon: "🦌", 
-                    facilityId: 6,
-                    scientificName: "Gazella dorcas",
-                    habitat: "Sabanas y desiertos africanos",
-                    diet: "Herbívoro (hierbas, arbustos)",
-                    lifespan: "10-12 años",
-                    description: "Conocida por su elegancia y velocidad, puede alcanzar hasta 80 km/h en carrera. Posee cuernos en forma de lira y un cuerpo esbelto adaptado para la carrera. Es presa habitual de grandes felinos."
+                    name: "Guacamaya", 
+                    icon: "🦜", 
+                    x: 320, y: 460,
+                    species: "Ara chloropterus",
+                    scientificName: "Ara chloropterus",
+                    habitat: "Selvas tropicales de América del Sur",
+                    diet: "Frugívoro (frutas, nueces, semillas)",
+                    lifespan: "50-60 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Plumaje rojo intenso con alas verdes, cara blanca con líneas rojas",
+                    description: "La guacamaya roja y verde es una de las especies más grandes de guacamayas. Tiene un plumaje predominantemente rojo con alas verdes y azules. Su cara tiene piel blanca con pequeñas líneas de plumas rojas. Es altamente social e inteligente, capaz de imitar sonidos."
                 },
                 { 
                     id: 7, 
-                    name: "Lince", 
-                    icon: "🐆", 
-                    facilityId: 7,
-                    scientificName: "Lynx lynx",
-                    habitat: "Bosques templados y boreales",
-                    diet: "Carnívoro (roedores, liebres, aves)",
-                    lifespan: "10-15 años",
-                    description: "Felino mediano reconocible por sus orejas puntiagudas con mechones negros y su cola corta. Es un cazador solitario y territorial, principalmente activo durante el crepúsculo y la noche."
+                    name: "Halcón", 
+                    icon: "🦅", 
+                    x: 350, y: 430,
+                    species: "CARACARA",
+                    scientificName: "Caracara plancus",
+                    habitat: "Sabanas, pastizales y áreas abiertas de América",
+                    diet: "Omnívoro oportunista (carroña, pequeños vertebrados, insectos)",
+                    lifespan: "15-20 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Cara naranja-rojiza, pico curvado, plumaje negro con pecho blanco",
+                    description: "El caracara es un ave rapaz que, a diferencia de otros halcones, pasa mucho tiempo en el suelo buscando alimento. Tiene una cara distintiva de color naranja-rojizo y un pico fuerte. Es oportunista y se alimenta tanto de carroña como de presas vivas."
                 },
                 { 
                     id: 8, 
                     name: "Zorro", 
                     icon: "🦊", 
-                    facilityId: 8,
-                    scientificName: "Vulpes vulpes",
-                    habitat: "Muy adaptable: bosques, praderas, montañas, desiertos",
-                    diet: "Omnívoro (pequeños mamíferos, aves, frutas, insectos)",
-                    lifespan: "2-5 años en estado salvaje",
-                    description: "Conocido por su astucia e inteligencia. Tiene un hocico alargado, orejas triangulares y una cola espesa. Es principalmente nocturno y crepuscular, y puede adaptarse a diversos hábitats, incluyendo zonas urbanas."
+                    x: 380, y: 450,
+                    species: "GRIS",
+                    scientificName: "Urocyon cinereoargenteus",
+                    habitat: "Bosques, matorrales y áreas montañosas",
+                    diet: "Omnívoro (pequeños mamíferos, frutas, insectos)",
+                    lifespan: "6-8 años en estado salvaje",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje gris plateado, línea negra a lo largo del lomo, cola con punta negra",
+                    description: "El zorro gris es único entre los cánidos por su habilidad para trepar árboles, gracias a sus garras semi-retráctiles. Tiene un pelaje gris plateado distintivo con marcas rojizas en cuello y patas. Es principalmente nocturno y crepuscular, y más omnívoro que otros zorros."
                 },
                 { 
                     id: 9, 
                     name: "Mapache", 
                     icon: "🦝", 
-                    facilityId: 9,
+                    x: 410, y: 420,
+                    species: "Procyon lotor",
                     scientificName: "Procyon lotor",
                     habitat: "Bosques cercanos a cursos de agua",
                     diet: "Omnívoro (frutas, nueces, insectos, pequeños vertebrados)",
                     lifespan: "2-3 años en estado salvaje",
-                    description: "Reconocible por su máscara facial negra y su cola anillada. Tiene manos muy hábiles que usa para manipular alimentos y objetos. Es principalmente nocturno y se ha adaptado bien a entornos urbanos."
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Máscara facial negra, cola anillada, manos muy sensibles",
+                    description: "Reconocible por su máscara facial negra y su cola anillada. Tiene manos muy hábiles que usa para manipular alimentos y objetos. Es principalmente nocturno y se ha adaptado bien a entornos urbanos. Su nombre en muchos idiomas hace referencia a su hábito de 'lavar' su comida antes de comerla."
                 },
                 { 
                     id: 10, 
                     name: "Hipopótamo", 
                     icon: "🦛", 
-                    facilityId: 10,
+                    x: 440, y: 450,
+                    species: "Hippopotamus amphibius",
                     scientificName: "Hippopotamus amphibius",
                     habitat: "Ríos y lagos africanos",
                     diet: "Herbívoro (hierbas)",
                     lifespan: "40-50 años",
-                    description: "A pesar de su apariencia tranquila, es uno de los animales más peligrosos de África. Pasa la mayor parte del día sumergido en el agua para mantenerse fresco y sale por la noche a pastar. Puede abrir su boca en un ángulo de 150 grados."
+                    conservationStatus: "Vulnerable (VU)",
+                    characteristics: "Cuerpo masivo, piel gruesa, mandíbulas poderosas, peso de 1.5-3 toneladas",
+                    description: "A pesar de su apariencia tranquila, es uno de los animales más peligrosos de África. Pasa la mayor parte del día sumergido en el agua para mantenerse fresco y sale por la noche a pastar. Puede abrir su boca en un ángulo de 150 grados y sus colmillos pueden alcanzar 50 cm de longitud."
                 },
                 { 
                     id: 11, 
-                    name: "Nutria", 
-                    icon: "🦦", 
-                    facilityId: 11,
-                    scientificName: "Lutra lutra",
-                    habitat: "Ríos, lagos y costas",
-                    diet: "Carnívoro (peces, crustáceos, anfibios)",
-                    lifespan: "8-10 años",
-                    description: "Excelente nadadora con un cuerpo hidrodinámico y patas palmeadas. Tiene un pelaje denso e impermeable que la protege del frío. Es juguetona y sociable, y utiliza herramientas como piedras para romper conchas."
+                    name: "Jirafa", 
+                    icon: "🦒", 
+                    x: 470, y: 420,
+                    species: "RETICULADA",
+                    scientificName: "Giraffa camelopardalis reticulata",
+                    habitat: "Sabanas y bosques abiertos del este de África",
+                    diet: "Herbívoro (hojas de árboles, principalmente acacias)",
+                    lifespan: "20-25 años",
+                    conservationStatus: "Vulnerable (VU)",
+                    characteristics: "Patrón reticulado distintivo, cuello extremadamente largo, altura de 4.5-5.5 metros",
+                    description: "La jirafa reticulada es reconocible por su patrón de manchas poligonales separadas por líneas blancas bien definidas. Es la subespecie más alta y elegante de jirafa. Su largo cuello contiene solo 7 vértebras (igual que los humanos) pero mucho más alargadas. Posee un sistema cardiovascular especializado para bombear sangre hasta su cerebro."
                 },
                 { 
                     id: 12, 
-                    name: "Nocturno", 
+                    name: "Nocturnario", 
                     icon: "🦉", 
-                    facilityId: 12,
-                    scientificName: "Strix aluco",
-                    habitat: "Bosques y áreas arboladas",
-                    diet: "Carnívoro (pequeños mamíferos, aves, insectos)",
-                    lifespan: "15-20 años",
-                    description: "Ave rapaz nocturna con excelente visión y audición. Sus ojos están fijos en sus órbitas, por lo que gira toda la cabeza para mirar en diferentes direcciones. Puede girar su cabeza hasta 270 grados."
+                    x: 500, y: 450,
+                    species: "",
+                    scientificName: "Varias especies",
+                    habitat: "Exhibición de animales nocturnos",
+                    diet: "Varía según especies",
+                    lifespan: "Varía según especies",
+                    conservationStatus: "Varía según especies",
+                    characteristics: "Exhibición con iluminación especial que permite observar animales de hábitos nocturnos",
+                    description: "El nocturnario es una instalación especializada con iluminación invertida que permite a los visitantes observar el comportamiento natural de especies nocturnas durante el día. Alberga murciélagos, búhos, loris, cuscús y otros animales adaptados a la vida nocturna."
                 },
                 { 
                     id: 13, 
                     name: "Avestruz", 
                     icon: "🦢", 
-                    facilityId: 13,
+                    x: 530, y: 420,
+                    species: "Struthio camelus",
                     scientificName: "Struthio camelus",
                     habitat: "Sabanas y desiertos africanos",
                     diet: "Omnívoro (plantas, insectos, pequeños vertebrados)",
                     lifespan: "40-45 años",
-                    description: "El ave más grande y pesada del mundo, incapaz de volar pero excelente corredora (hasta 70 km/h). Tiene ojos grandes y largas pestañas para protegerse del polvo y la arena. Pone los huevos más grandes de cualquier ave terrestre."
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Ave más grande del mundo, incapaz de volar, patas largas y fuertes, plumaje negro en machos y gris en hembras",
+                    description: "El avestruz es el ave más grande y pesada del mundo, incapaz de volar pero excelente corredora (hasta 70 km/h). Tiene ojos grandes y largas pestañas para protegerse del polvo y la arena. Pone los huevos más grandes de cualquier ave terrestre, con un peso de hasta 1.5 kg."
                 },
                 { 
                     id: 14, 
-                    name: "Flamenco", 
-                    icon: "🦩", 
-                    facilityId: 14,
-                    scientificName: "Phoenicopterus roseus",
-                    habitat: "Lagos salinos y lagunas costeras",
-                    diet: "Omnívoro (crustáceos, algas, pequeños invertebrados)",
-                    lifespan: "20-30 años",
-                    description: "Ave zancuda conocida por su color rosa, que obtiene de los carotenoides presentes en su dieta. Se alimenta con la cabeza invertida, filtrando el agua con su pico especializado. Suele pararse sobre una sola pata para conservar calor corporal."
+                    name: "Antílope", 
+                    icon: "🦌", 
+                    x: 560, y: 450,
+                    species: "BLACK BUCK",
+                    scientificName: "Antilope cervicapra",
+                    habitat: "Praderas y bosques abiertos del sur de Asia",
+                    diet: "Herbívoro (hierbas, hojas, brotes)",
+                    lifespan: "10-15 años",
+                    conservationStatus: "Casi amenazado (NT)",
+                    characteristics: "Machos con pelaje negro y cuernos en espiral, hembras de color marrón claro sin cuernos",
+                    description: "El antílope negro o blackbuck es conocido por el marcado dimorfismo sexual: los machos tienen pelaje negro y largos cuernos en espiral, mientras que las hembras son de color marrón claro y carecen de cuernos. Es uno de los antílopes más rápidos, capaz de alcanzar velocidades de hasta 80 km/h."
                 },
                 { 
                     id: 15, 
-                    name: "Chimpancé", 
-                    icon: "🐵", 
-                    facilityId: 15,
-                    scientificName: "Pan troglodytes",
-                    habitat: "Bosques tropicales y sabanas de África",
-                    diet: "Omnívoro (frutas, hojas, insectos, pequeños mamíferos)",
-                    lifespan: "40-50 años",
-                    description: "El pariente vivo más cercano a los humanos, compartiendo el 98.6% de nuestro ADN. Es altamente inteligente, capaz de usar herramientas y tiene una compleja estructura social. Puede aprender lenguaje de señas y comunicarse con humanos."
+                    name: "Antílope", 
+                    icon: "🦌", 
+                    x: 590, y: 420,
+                    species: "ÑU",
+                    scientificName: "Connochaetes taurinus",
+                    habitat: "Sabanas y llanuras de África oriental y meridional",
+                    diet: "Herbívoro (hierbas)",
+                    lifespan: "20-25 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Aspecto de bovino con barba y melena, cuernos curvados, color gris azulado",
+                    description: "El ñu azul o gnu es conocido por sus migraciones masivas en busca de pastos frescos. Tiene un aspecto que combina características de bovino, antílope y caballo. Forma grandes manadas y es presa habitual de grandes depredadores como leones y cocodrilos durante sus migraciones al cruzar ríos."
                 },
                 { 
                     id: 16, 
-                    name: "Rinoceronte", 
-                    icon: "🦏", 
-                    facilityId: 16,
-                    scientificName: "Ceratotherium simum",
-                    habitat: "Sabanas y praderas africanas",
-                    diet: "Herbívoro (hierbas)",
-                    lifespan: "40-50 años",
-                    description: "Reconocible por sus cuernos característicos hechos de queratina compactada. A pesar de su gran tamaño, puede correr a velocidades de hasta 55 km/h. Tiene una piel gruesa y arrugada que actúa como armadura natural."
+                    name: "Aves", 
+                    icon: "🦜", 
+                    x: 620, y: 450,
+                    species: "MEXICANAS",
+                    scientificName: "Varias especies",
+                    habitat: "Diversos ecosistemas mexicanos",
+                    diet: "Varía según especies",
+                    lifespan: "Varía según especies",
+                    conservationStatus: "Varía según especies",
+                    characteristics: "Colección de aves endémicas de México con diversos colores y tamaños",
+                    description: "Exhibición que alberga diversas especies de aves nativas de México, incluyendo quetzales, tucanes, chachalacas, carpinteros y colibríes. La colección destaca la rica biodiversidad aviar del país y la importancia de su conservación frente a amenazas como la pérdida de hábitat y el tráfico ilegal."
                 },
                 { 
                     id: 17, 
-                    name: "Águila", 
-                    icon: "🦅", 
-                    facilityId: 17,
-                    scientificName: "Aquila chrysaetos",
-                    habitat: "Montañas, bosques y llanuras abiertas",
-                    diet: "Carnívoro (mamíferos medianos, aves, carroña)",
-                    lifespan: "20-30 años",
-                    description: "Ave rapaz con excelente visión, capaz de detectar presas a 3 km de distancia. Tiene garras poderosas y un pico fuerte y curvado para desgarrar carne. Construye nidos enormes en acantilados o árboles altos."
+                    name: "Embarcadero", 
+                    icon: "🚣", 
+                    x: 650, y: 420,
+                    species: "",
+                    scientificName: "",
+                    habitat: "Lago artificial",
+                    diet: "",
+                    lifespan: "",
+                    conservationStatus: "",
+                    characteristics: "Muelle de madera con botes disponibles para alquiler",
+                    description: "Estructura que permite a los visitantes alquilar botes de remos o pedales para navegar por el lago central del parque. Ofrece una perspectiva única para observar la fauna acuática y las aves que habitan en el lago y sus alrededores."
                 },
                 { 
                     id: 18, 
-                    name: "Búho", 
-                    icon: "🦉", 
-                    facilityId: 18,
-                    scientificName: "Bubo bubo",
-                    habitat: "Bosques, montañas y desiertos",
-                    diet: "Carnívoro (roedores, aves, insectos)",
-                    lifespan: "15-20 años",
-                    description: "Ave rapaz nocturna con ojos grandes orientados hacia adelante que le proporcionan visión binocular. Su vuelo es silencioso gracias a adaptaciones especiales en sus plumas. Puede girar su cabeza hasta 270 grados."
+                    name: "Tigre", 
+                    icon: "🐅", 
+                    x: 680, y: 450,
+                    species: "DE BENGALA",
+                    scientificName: "Panthera tigris tigris",
+                    habitat: "Selvas, manglares y praderas de la India y Bangladesh",
+                    diet: "Carnívoro (ungulados, ciervos, jabalíes)",
+                    lifespan: "10-15 años en estado salvaje",
+                    conservationStatus: "En peligro (EN)",
+                    characteristics: "Pelaje naranja con rayas negras, patrón único en cada individuo, peso de 180-260 kg en machos",
+                    description: "El tigre de Bengala es la subespecie más numerosa de tigre. Cada individuo tiene un patrón único de rayas que actúa como huella digital. Son excelentes nadadores y cazadores solitarios, principalmente activos al amanecer y al anochecer. La pérdida de hábitat y la caza furtiva son sus principales amenazas."
                 },
                 { 
                     id: 19, 
-                    name: "Guacamayo", 
-                    icon: "🦜", 
-                    facilityId: 19,
-                    scientificName: "Ara macao",
-                    habitat: "Selvas tropicales de América Central y del Sur",
-                    diet: "Herbívoro (frutas, nueces, semillas)",
-                    lifespan: "50-60 años",
-                    description: "Ave tropical de colores brillantes con un pico fuerte y curvado capaz de romper nueces duras. Es altamente inteligente y social, formando parejas de por vida. Puede imitar sonidos y algunas palabras humanas."
+                    name: "León", 
+                    icon: "🦁", 
+                    x: 710, y: 420,
+                    species: "AFRICANO",
+                    scientificName: "Panthera leo",
+                    habitat: "Sabanas y praderas africanas",
+                    diet: "Carnívoro (ungulados medianos y grandes)",
+                    lifespan: "10-14 años en estado salvaje",
+                    conservationStatus: "Vulnerable (VU)",
+                    characteristics: "Machos con melena distintiva, cuerpo musculoso, color amarillo-dorado",
+                    description: "El león es el único felino verdaderamente social, viviendo en grupos llamados manadas. Los machos se distinguen por su melena que puede variar de color desde el rubio hasta el negro. Las hembras son las principales cazadoras, mientras que los machos defienden el territorio y la manada."
                 },
                 { 
                     id: 20, 
-                    name: "Oso", 
-                    icon: "🐻", 
-                    facilityId: 28,
-                    scientificName: "Ursus arctos",
-                    habitat: "Bosques, montañas y tundra",
-                    diet: "Omnívoro (bayas, raíces, peces, mamíferos)",
-                    lifespan: "20-30 años",
-                    description: "Mamífero grande con un excelente sentido del olfato, hasta 7 veces mejor que el de un perro. A pesar de su tamaño, puede correr a velocidades de hasta 55 km/h. Hiberna durante el invierno en regiones frías."
+                    name: "Peplón", 
+                    icon: "🐒", 
+                    x: 150, y: 300,
+                    species: "SAGRADO",
+                    scientificName: "Papio hamadryas",
+                    habitat: "Sabanas y zonas rocosas del noreste de África",
+                    diet: "Omnívoro (frutas, semillas, insectos, pequeños vertebrados)",
+                    lifespan: "25-30 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Dimorfismo sexual marcado, machos con melena plateada y hembras más pequeñas de color marrón",
+                    description: "El papión sagrado o hamadryas es un babuino con un marcado dimorfismo sexual. Los machos tienen una melena distintiva de color plateado y son considerablemente más grandes que las hembras. Viven en complejos sistemas sociales con múltiples niveles de organización. Fueron venerados en el antiguo Egipto."
                 },
                 { 
                     id: 21, 
                     name: "Leopardo", 
                     icon: "🐆", 
-                    facilityId: 21,
+                    x: 180, y: 320,
+                    species: "Panthera pardus",
                     scientificName: "Panthera pardus",
                     habitat: "Sabanas, bosques y montañas de África y Asia",
                     diet: "Carnívoro (ungulados, primates, roedores)",
                     lifespan: "12-17 años en estado salvaje",
-                    description: "Felino ágil y poderoso, conocido por su capacidad para trepar árboles y llevar presas varias veces su peso a las ramas. Su patrón de manchas le proporciona un excelente camuflaje. Es principalmente solitario y territorial."
+                    conservationStatus: "Vulnerable (VU)",
+                    characteristics: "Pelaje amarillo con manchas negras en roseta, cuerpo musculoso y flexible",
+                    description: "Felino ágil y poderoso, conocido por su capacidad para trepar árboles y llevar presas varias veces su peso a las ramas. Su patrón de manchas le proporciona un excelente camuflaje. Es principalmente solitario y territorial, cazando mediante emboscadas. Es el más adaptable de los grandes felinos."
                 },
                 { 
                     id: 22, 
                     name: "Cocodrilo", 
                     icon: "🐊", 
-                    facilityId: 22,
-                    scientificName: "Crocodylus niloticus",
-                    habitat: "Ríos, lagos y pantanos",
+                    x: 210, y: 280,
+                    species: "Crocodylus acutus",
+                    scientificName: "Crocodylus acutus",
+                    habitat: "Ríos, estuarios y costas de América",
                     diet: "Carnívoro (peces, aves, mamíferos)",
-                    lifespan: "70-100 años",
-                    description: "Reptil prehistórico con una mordida extremadamente poderosa. Puede permanecer sumergido hasta 2 horas y sobrevivir meses sin comer. Las hembras son madres dedicadas que protegen a sus crías durante varios meses."
+                    lifespan: "70-80 años",
+                    conservationStatus: "Vulnerable (VU)",
+                    characteristics: "Hocico largo y estrecho, dientes visibles con la boca cerrada, color gris-verdoso",
+                    description: "El cocodrilo americano es una especie de gran tamaño que puede alcanzar los 5-6 metros de longitud. Tiene una mordida extremadamente poderosa. Puede permanecer sumergido hasta 2 horas y sobrevivir meses sin comer. Las hembras son madres dedicadas que protegen a sus crías durante varios meses."
                 },
                 { 
                     id: 23, 
                     name: "Mono", 
                     icon: "🐒", 
-                    facilityId: 23,
-                    scientificName: "Macaca mulatta",
-                    habitat: "Bosques tropicales y subtropicales",
-                    diet: "Omnívoro (frutas, semillas, insectos)",
-                    lifespan: "20-30 años",
-                    description: "Primate social e inteligente que vive en grupos jerárquicos. Tiene pulgares oponibles que le permiten manipular objetos con precisión. Es curioso por naturaleza y aprende rápidamente observando a otros."
+                    x: 240, y: 320,
+                    species: "ARAÑA",
+                    scientificName: "Ateles geoffroyi",
+                    habitat: "Selvas tropicales de América Central y del Sur",
+                    diet: "Frugívoro (principalmente frutas, también hojas y flores)",
+                    lifespan: "20-25 años",
+                    conservationStatus: "En peligro (EN)",
+                    characteristics: "Extremidades largas, cola prensil que funciona como quinta extremidad, cuerpo delgado",
+                    description: "El mono araña debe su nombre a sus extremidades largas y delgadas. Su cola prensil es tan fuerte que puede soportar todo el peso de su cuerpo. Son excelentes acróbatas que se desplazan balanceándose entre los árboles. Viven en grupos sociales y son importantes dispersores de semillas en su ecosistema."
                 },
                 { 
                     id: 24, 
-                    name: "Tigre Blanco", 
-                    icon: "🐅", 
-                    facilityId: 24,
-                    scientificName: "Panthera tigris",
-                    habitat: "Bosques y praderas de Asia",
-                    diet: "Carnívoro (ungulados, ciervos, jabalíes)",
-                    lifespan: "10-15 años en estado salvaje",
-                    description: "Variante genética rara del tigre de Bengala, no es una subespecie separada. Su coloración blanca se debe a un gen recesivo. En la naturaleza, esta coloración es desventajosa para la caza, por lo que son extremadamente raros en estado salvaje."
+                    name: "Lemur", 
+                    icon: "🐒", 
+                    x: 270, y: 280,
+                    species: "COLA ANILLADA",
+                    scientificName: "Lemur catta",
+                    habitat: "Bosques secos y espinosos de Madagascar",
+                    diet: "Omnívoro (frutas, hojas, insectos)",
+                    lifespan: "16-19 años",
+                    conservationStatus: "En peligro (EN)",
+                    characteristics: "Cola larga con anillos blancos y negros, cara con máscara negra, peso de 2.5-3.5 kg",
+                    description: "El lémur de cola anillada es un primate endémico de Madagascar, reconocible por su cola larga con anillos blancos y negros. Son animales sociales que viven en grupos matriarcales. Utilizan su cola para comunicarse y mantener el equilibrio. Su característica postura de 'adoración al sol' les ayuda a calentarse por las mañanas."
                 },
                 { 
                     id: 25, 
+                    name: "Aviario", 
+                    icon: "🦜", 
+                    x: 300, y: 320,
+                    species: "",
+                    scientificName: "Varias especies",
+                    habitat: "Recinto cerrado con malla",
+                    diet: "Varía según especies",
+                    lifespan: "Varía según especies",
+                    conservationStatus: "Varía según especies",
+                    characteristics: "Gran jaula donde las aves pueden volar libremente mientras los visitantes caminan por su interior",
+                    description: "Espacio cerrado con malla donde habitan diversas especies de aves en un entorno que simula su hábitat natural. Los visitantes pueden caminar por senderos dentro del aviario, observando a las aves volar libremente a su alrededor. Incluye especies tropicales, acuáticas y de bosque."
+                },
+                { 
+                    id: 26, 
                     name: "Mapache", 
                     icon: "🦝", 
-                    facilityId: 25,
+                    x: 330, y: 280,
+                    species: "Procyon lotor",
                     scientificName: "Procyon lotor",
                     habitat: "Bosques cercanos a cursos de agua",
                     diet: "Omnívoro (frutas, nueces, insectos, pequeños vertebrados)",
                     lifespan: "2-3 años en estado salvaje",
-                    description: "Mamífero nocturno con distintiva máscara facial y cola anillada. Tiene manos extremadamente sensibles y hábiles que utiliza para 'lavar' su comida antes de comerla. Es altamente adaptable y ha prosperado en entornos urbanos."
-                },
-                { 
-                    id: 26, 
-                    name: "Canguro", 
-                    icon: "🦘", 
-                    facilityId: 26,
-                    scientificName: "Macropus rufus",
-                    habitat: "Llanuras y zonas áridas de Australia",
-                    diet: "Herbívoro (hierbas, arbustos)",
-                    lifespan: "15-20 años",
-                    description: "Marsupial conocido por su forma de desplazamiento a saltos y su bolsa ventral donde desarrolla a sus crías. Puede saltar hasta 9 metros de longitud y 3 metros de altura. Utiliza su potente cola como contrapeso y como quinta extremidad."
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Máscara facial negra, cola anillada, manos muy sensibles",
+                    description: "Mamífero nocturno con distintiva máscara facial y cola anillada. Tiene manos extremadamente sensibles y hábiles que utiliza para 'lavar' su comida antes de comerla. Es altamente adaptable y ha prosperado en entornos urbanos. Su inteligencia y destreza manual le permiten resolver problemas complejos."
                 },
                 { 
                     id: 27, 
-                    name: "Lobo", 
-                    icon: "🐺", 
-                    facilityId: 27,
-                    scientificName: "Canis lupus",
-                    habitat: "Bosques, tundra, montañas y praderas",
-                    diet: "Carnívoro (ungulados, roedores, carroña)",
-                    lifespan: "6-8 años en estado salvaje",
-                    description: "Cánido social que vive en manadas con una estructura jerárquica compleja. Es un cazador cooperativo con excelente resistencia, capaz de recorrer grandes distancias. Su aullido puede escucharse hasta 10 km de distancia."
+                    name: "Martucha", 
+                    icon: "🐒", 
+                    x: 360, y: 320,
+                    species: "Potos flavus",
+                    scientificName: "Potos flavus",
+                    habitat: "Selvas tropicales de América Central y del Sur",
+                    diet: "Omnívoro (frutas, néctar, insectos, pequeños vertebrados)",
+                    lifespan: "20-25 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Cola prensil, pelaje dorado-marrón, ojos grandes adaptados a la visión nocturna",
+                    description: "También conocida como kinkajú, la martucha es un mamífero arborícola y nocturno relacionado con los mapaches. Tiene una cola prensil que usa como quinta extremidad para moverse entre los árboles. Su lengua larga y delgada está adaptada para alimentarse de néctar y miel, actuando como polinizador de algunas plantas."
                 },
                 { 
                     id: 28, 
-                    name: "Oso Panda", 
-                    icon: "🐼", 
-                    facilityId: 33,
-                    scientificName: "Ailuropoda melanoleuca",
-                    habitat: "Bosques de bambú en montañas de China",
-                    diet: "Herbívoro (99% bambú)",
-                    lifespan: "20-30 años",
-                    description: "A pesar de pertenecer al orden de los carnívoros, su dieta consiste casi exclusivamente de bambú. Tiene un 'sexto dedo' (un hueso de la muñeca modificado) que utiliza para sujetar el bambú. Pasa 10-16 horas al día comiendo."
+                    name: "León", 
+                    icon: "🦁", 
+                    x: 390, y: 280,
+                    species: "AFRICANO",
+                    scientificName: "Panthera leo",
+                    habitat: "Sabanas y praderas africanas",
+                    diet: "Carnívoro (ungulados medianos y grandes)",
+                    lifespan: "10-14 años en estado salvaje",
+                    conservationStatus: "Vulnerable (VU)",
+                    characteristics: "Machos con melena distintiva, cuerpo musculoso, color amarillo-dorado",
+                    description: "El león es el único felino verdaderamente social, viviendo en grupos llamados manadas. Los machos se distinguen por su melena que puede variar de color desde el rubio hasta el negro. Las hembras son las principales cazadoras, mientras que los machos defienden el territorio y la manada."
                 },
                 { 
                     id: 29, 
-                    name: "Jaguar", 
-                    icon: "🐆", 
-                    facilityId: 29,
-                    scientificName: "Panthera onca",
-                    habitat: "Selvas tropicales y pantanos de América",
-                    diet: "Carnívoro (caimanes, capibaras, tapires)",
-                    lifespan: "12-15 años en estado salvaje",
-                    description: "El felino más grande de América y el tercero más grande del mundo. Tiene la mordida más potente entre los felinos, capaz de perforar cráneos y caparazones de tortugas. Es un excelente nadador y trepa árboles con facilidad."
+                    name: "León", 
+                    icon: "🦁", 
+                    x: 420, y: 320,
+                    species: "AFRICANO",
+                    scientificName: "Panthera leo",
+                    habitat: "Sabanas y praderas africanas",
+                    diet: "Carnívoro (ungulados medianos y grandes)",
+                    lifespan: "10-14 años en estado salvaje",
+                    conservationStatus: "Vulnerable (VU)",
+                    characteristics: "Machos con melena distintiva, cuerpo musculoso, color amarillo-dorado",
+                    description: "El león es el único felino verdaderamente social, viviendo en grupos llamados manadas. Los machos se distinguen por su melena que puede variar de color desde el rubio hasta el negro. Las hembras son las principales cazadoras, mientras que los machos defienden el territorio y la manada."
                 },
                 { 
                     id: 30, 
+                    name: "Oso Negro", 
+                    icon: "🐻", 
+                    x: 450, y: 280,
+                    species: "AMERICANO",
+                    scientificName: "Ursus americanus",
+                    habitat: "Bosques de Norteamérica",
+                    diet: "Omnívoro (bayas, nueces, insectos, peces, pequeños mamíferos)",
+                    lifespan: "20-30 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje negro (aunque puede variar a marrón o canela), hocico alargado, orejas redondeadas",
+                    description: "A pesar de su nombre, el oso negro americano puede presentar diferentes coloraciones. Es más pequeño que el oso pardo y excelente trepador de árboles. Hiberna durante el invierno en regiones frías. Tiene un excelente sentido del olfato, hasta 7 veces mejor que el de un perro."
+                },
+                { 
+                    id: 31, 
+                    name: "Guanaco", 
+                    icon: "🦙", 
+                    x: 480, y: 320,
+                    species: "Lama guanicoe",
+                    scientificName: "Lama guanicoe",
+                    habitat: "Altiplanos y estepas de Sudamérica",
+                    diet: "Herbívoro (pastos, arbustos)",
+                    lifespan: "20-25 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje lanudo de color marrón rojizo, cuello largo, orejas puntiagudas",
+                    description: "El guanaco es un camélido sudamericano, ancestro salvaje de la llama doméstica. Está adaptado a ambientes áridos y de gran altitud. Vive en grupos familiares liderados por un macho dominante. Cuando se siente amenazado, puede correr a velocidades de hasta 56 km/h y escupir una mezcla de saliva y contenido estomacal."
+                },
+                { 
+                    id: 32, 
+                    name: "Ciervo", 
+                    icon: "🦌", 
+                    x: 510, y: 280,
+                    species: "SIKA",
+                    scientificName: "Cervus nippon",
+                    habitat: "Bosques templados y subtropicales de Asia Oriental",
+                    diet: "Herbívoro (hierbas, hojas, cortezas)",
+                    lifespan: "15-18 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje moteado en verano, astas ramificadas en machos, mancha blanca en el trasero",
+                    description: "El ciervo sika es originario de Asia Oriental. Su nombre 'sika' significa 'ciervo' en japonés. Mantiene su pelaje moteado en verano, pero se vuelve más oscuro y uniforme en invierno. Los machos emiten un silbido característico durante la época de apareamiento y desarrollan astas que mudan anualmente."
+                },
+                { 
+                    id: 33, 
+                    name: "Bisonte", 
+                    icon: "🦬", 
+                    x: 540, y: 320,
+                    species: "AMERICANO",
+                    scientificName: "Bison bison",
+                    habitat: "Praderas y llanuras de Norteamérica",
+                    diet: "Herbívoro (pastos)",
+                    lifespan: "15-20 años",
+                    conservationStatus: "Casi amenazado (NT)",
+                    characteristics: "Cabeza y parte delantera masivas, joroba pronunciada, cuernos cortos y curvados",
+                    description: "El bisonte americano es el mamífero terrestre más grande de Norteamérica. Fue llevado casi a la extinción en el siglo XIX, pero los esfuerzos de conservación han permitido su recuperación. A pesar de su gran tamaño, puede correr a velocidades de hasta 55 km/h y saltar obstáculos de 1.8 metros de altura."
+                },
+                { 
+                    id: 34, 
+                    name: "Carabao", 
+                    icon: "🐃", 
+                    x: 570, y: 280,
+                    species: "Bubalus bubalis",
+                    scientificName: "Bubalus bubalis",
+                    habitat: "Pantanos y humedales del Sudeste Asiático",
+                    diet: "Herbívoro (hierbas acuáticas, pastos)",
+                    lifespan: "25-30 años",
+                    conservationStatus: "No evaluado (NE) - Domesticado",
+                    characteristics: "Cuernos grandes y curvados hacia atrás, piel gris oscura, patas con 'calcetines' blancos",
+                    description: "El carabao o búfalo de agua es un bovino originario de Asia, ampliamente domesticado como animal de trabajo y producción. Está adaptado a ambientes húmedos y pantanosos, donde pasa gran parte del día sumergido para regular su temperatura. Es un animal fuerte y resistente, capaz de trabajar en condiciones difíciles."
+                },
+                { 
+                    id: 35, 
+                    name: "Mono", 
+                    icon: "🐒", 
+                    x: 600, y: 320,
+                    species: "JAPONÉS",
+                    scientificName: "Macaca fuscata",
+                    habitat: "Bosques montañosos de Japón",
+                    diet: "Omnívoro (frutas, semillas, insectos, pequeños animales)",
+                    lifespan: "25-30 años",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje denso gris-marrón, cara y trasero rojizos, cola corta",
+                    description: "El macaco japonés o mono de las nieves es famoso por bañarse en aguas termales durante el invierno. Es el primate no humano que vive más al norte. Tiene una estructura social compleja y ha desarrollado tradiciones culturales como lavar alimentos antes de comerlos, comportamiento que se transmite de generación en generación."
+                },
+                { 
+                    id: 36, 
+                    name: "Lobo", 
+                    icon: "🐺", 
+                    x: 630, y: 280,
+                    species: "CANADIENSE",
+                    scientificName: "Canis lupus occidentalis",
+                    habitat: "Bosques boreales y tundra de Norteamérica",
+                    diet: "Carnívoro (ungulados, castores, liebres)",
+                    lifespan: "7-8 años en estado salvaje",
+                    conservationStatus: "Preocupación menor (LC)",
+                    characteristics: "Pelaje espeso gris-blanco, patas largas, orejas triangulares",
+                    description: "El lobo canadiense es una de las subespecies más grandes de lobo gris. Vive en manadas con una estructura social jerárquica compleja. Es un cazador cooperativo con excelente resistencia, capaz de recorrer grandes distancias. Su aullido, que puede escucharse hasta 10 km de distancia, sirve para comunicarse con otros miembros de la manada."
+                },
+                { 
+                    id: 37, 
                     name: "Acuario", 
                     icon: "🐠", 
-                    facilityId: 30,
+                    x: 660, y: 320,
+                    species: "",
                     scientificName: "Varias especies",
                     habitat: "Ecosistemas acuáticos recreados",
                     diet: "Varía según especies",
                     lifespan: "Varía según especies",
-                    description: "Exhibición que alberga diversas especies acuáticas en ambientes controlados que recrean sus hábitats naturales. Incluye peces tropicales, corales, crustáceos y otras formas de vida acuática de diferentes regiones del mundo."
+                    conservationStatus: "Varía según especies",
+                    characteristics: "Exhibición con tanques que recrean diversos ecosistemas acuáticos",
+                    description: "Instalación que alberga diversas especies acuáticas en ambientes controlados que recrean sus hábitats naturales. Incluye peces tropicales, corales, crustáceos y otras formas de vida acuática de diferentes regiones del mundo. Cuenta con un túnel submarino que permite a los visitantes observar a los animales desde una perspectiva única."
                 }
             ];
 
@@ -870,7 +1101,7 @@
 
             // Llenar listas de instalaciones y animales
             function populateLists() {
-                // Llenar lista de instalaciones
+                // Llenar lista de instalaciones (SOLO INSTALACIONES, NO ANIMALES)
                 parkFacilities.forEach(facility => {
                     const li = document.createElement('li');
                     li.setAttribute('data-id', facility.id);
@@ -899,6 +1130,7 @@
                             <div class="animal-info">
                                 <h3>${animal.name}</h3>
                                 <p><em>${animal.scientificName}</em></p>
+                                <p><strong>Especie:</strong> ${animal.species}</p>
                             </div>
                         </div>
                         <p>${animal.description}</p>
@@ -907,14 +1139,17 @@
                             <span class="animal-detail">Dieta: ${animal.diet}</span>
                             <span class="animal-detail">Vida: ${animal.lifespan}</span>
                         </div>
+                        <div class="conservation-status">
+                            <strong>Estado de conservación:</strong> ${animal.conservationStatus}
+                        </div>
+                        <div class="animal-detail" style="margin-top: 0.5rem; display: block;">
+                            <strong>Características:</strong> ${animal.characteristics}
+                        </div>
                     `;
                     
                     card.addEventListener('click', () => {
-                        const facility = parkFacilities.find(f => f.id === animal.facilityId);
-                        if (facility) {
-                            showFacilityInfo(facility);
-                            document.querySelector('[data-tab="mapa"]').click();
-                        }
+                        showAnimalInfo(animal);
+                        document.querySelector('[data-tab="mapa"]').click();
                     });
                     animalsGrid.appendChild(card);
                 });
@@ -1019,30 +1254,42 @@
                     ctx.fill();
                 });
                 
-                // Ubicar instalaciones según el mapa real
-                mapLocations.forEach(location => {
-                    const facility = parkFacilities.find(f => f.id === location.id);
-                    if (facility) {
-                        // Actualizar coordenadas de la instalación
-                        facility.x = location.x;
-                        facility.y = location.y;
-                        
-                        // Dibujar círculo para la instalación
-                        ctx.beginPath();
-                        ctx.arc(facility.x, facility.y, facility.radius, 0, Math.PI * 2);
-                        ctx.fillStyle = facility.color;
-                        ctx.fill();
-                        ctx.strokeStyle = '#fff';
-                        ctx.lineWidth = 2;
-                        ctx.stroke();
-                        
-                        // Dibujar número de la instalación
-                        ctx.fillStyle = '#fff';
-                        ctx.font = 'bold 12px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(facility.id, facility.x, facility.y);
-                    }
+                // Dibujar instalaciones
+                parkFacilities.forEach(facility => {
+                    // Dibujar círculo para la instalación
+                    ctx.beginPath();
+                    ctx.arc(facility.x, facility.y, facility.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = facility.color;
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Dibujar letra de la instalación
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(facility.id, facility.x, facility.y);
+                });
+                
+                // Dibujar animales
+                parkAnimals.forEach(animal => {
+                    // Dibujar círculo para el animal
+                    ctx.beginPath();
+                    ctx.arc(animal.x, animal.y, 15, 0, Math.PI * 2);
+                    ctx.fillStyle = '#8bc34a';
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Dibujar número del animal
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(animal.id, animal.x, animal.y);
                 });
                 
                 // Dibujar etiquetas para áreas principales
@@ -1057,37 +1304,84 @@
 
             // Mostrar información de la instalación
             function showFacilityInfo(facility) {
-                // Encontrar animales relacionados con esta instalación
-                const relatedAnimals = parkAnimals.filter(animal => animal.facilityId === facility.id);
-                
-                let animalsList = '';
-                if (relatedAnimals.length > 0) {
-                    animalsList = '<h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Animales en esta zona:</h4><ul style="list-style-type: none; padding-left: 0;">';
-                    relatedAnimals.forEach(animal => {
-                        animalsList += `<li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                            <span style="font-size: 1.5rem; margin-right: 0.5rem;">${animal.icon}</span>
-                            <div>
-                                <strong>${animal.name}</strong> (${animal.id})
-                                <div style="font-size: 0.9rem; color: #555;">${animal.scientificName}</div>
-                            </div>
-                        </li>`;
-                    });
-                    animalsList += '</ul>';
-                }
-                
                 infoPanel.innerHTML = `
+                    <button class="close-btn">×</button>
                     <h3>${facility.name}</h3>
-                    <p><strong>Zona #${facility.id}</strong></p>
-                    <p>Tipo: ${getTypeLabel(facility.type)}</p>
-                    <p>Ubicación: Coordenadas (${facility.x}, ${facility.y})</p>
-                    ${animalsList}
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Identificador:</strong> ${facility.id}
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Tipo:</strong> ${getTypeLabel(facility.type)}
+                    </div>
+                    <p style="margin-top: 1rem;">${facility.description}</p>
                     <div style="margin-top: 1rem; padding: 0.5rem; background-color: #e8f5e9; border-radius: 4px; font-size: 0.9rem;">
-                        <strong>Nota:</strong> Haz clic en los números del mapa para ver más información sobre cada zona.
+                        <strong>Nota:</strong> Haz clic en los puntos del mapa para ver más información sobre cada zona.
                     </div>
                 `;
                 
+                // Agregar funcionalidad al botón de cerrar
+                const closeBtn = infoPanel.querySelector('.close-btn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        infoPanel.innerHTML = `
+                            <h3>Información</h3>
+                            <p>Selecciona una zona del parque para ver detalles</p>
+                        `;
+                    });
+                }
+                
                 // Resaltar elementos relacionados
-                highlightRelatedItems(facility);
+                highlightRelatedItems(facility.id);
+            }
+            
+            // Mostrar información del animal
+            function showAnimalInfo(animal) {
+                infoPanel.innerHTML = `
+                    <button class="close-btn">×</button>
+                    <h3>${animal.id}. ${animal.name}</h3>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Número:</strong> ${animal.id}
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Especie:</strong> ${animal.species}
+                    </div>
+                    <p style="margin-top: 1rem;">${animal.description}</p>
+                    
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <h4>Hábitat</h4>
+                            ${animal.habitat}
+                        </div>
+                        <div class="info-box">
+                            <h4>Dieta</h4>
+                            ${animal.diet}
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h4>Estado de conservación</h4>
+                        <p>${animal.conservationStatus}</p>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h4>Características</h4>
+                        <p>${animal.characteristics}</p>
+                    </div>
+                `;
+                
+                // Agregar funcionalidad al botón de cerrar
+                const closeBtn = infoPanel.querySelector('.close-btn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        infoPanel.innerHTML = `
+                            <h3>Información</h3>
+                            <p>Selecciona una zona del parque para ver detalles</p>
+                        `;
+                    });
+                }
+                
+                // Resaltar elementos relacionados
+                highlightRelatedItems(animal.id);
             }
             
             // Obtener etiqueta para el tipo de instalación
@@ -1105,11 +1399,11 @@
             }
             
             // Resaltar elementos relacionados
-            function highlightRelatedItems(facility) {
+            function highlightRelatedItems(id) {
                 // Resaltar en la lista de instalaciones
                 document.querySelectorAll('.facilities-list li').forEach(item => {
                     item.classList.remove('highlight');
-                    if (parseInt(item.getAttribute('data-id')) === facility.id) {
+                    if (item.getAttribute('data-id') === id.toString()) {
                         item.classList.add('highlight');
                     }
                 });
@@ -1118,14 +1412,13 @@
                 document.querySelectorAll('.animal-card').forEach(card => {
                     card.classList.remove('highlight');
                     const animalId = parseInt(card.getAttribute('data-id'));
-                    const animal = parkAnimals.find(a => a.id === animalId);
-                    if (animal && animal.facilityId === facility.id) {
+                    if (animalId === id) {
                         card.classList.add('highlight');
                     }
                 });
             }
 
-            // Detectar clic en instalaciones
+            // Detectar clic en el mapa
             canvas.addEventListener('click', function(event) {
                 const rect = canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left;
@@ -1139,6 +1432,9 @@
                 const clickY = y * scaleY;
                 
                 // Verificar si el clic fue en alguna instalación
+                let found = false;
+                
+                // Primero verificar instalaciones
                 for (const facility of parkFacilities) {
                     const distance = Math.sqrt(
                         Math.pow(clickX - facility.x, 2) + Math.pow(clickY - facility.y, 2)
@@ -1146,12 +1442,28 @@
                     
                     if (distance <= facility.radius) {
                         showFacilityInfo(facility);
+                        found = true;
                         break;
+                    }
+                }
+                
+                // Si no se encontró una instalación, verificar animales
+                if (!found) {
+                    for (const animal of parkAnimals) {
+                        const distance = Math.sqrt(
+                            Math.pow(clickX - animal.x, 2) + Math.pow(clickY - animal.y, 2)
+                        );
+                        
+                        if (distance <= 15) { // Radio de los círculos de animales
+                            showAnimalInfo(animal);
+                            found = true;
+                            break;
+                        }
                     }
                 }
             });
 
-            // Mostrar tooltip al pasar el mouse sobre las instalaciones
+            // Mostrar tooltip al pasar el mouse sobre los puntos
             let tooltip = null;
             
             canvas.addEventListener('mousemove', function(event) {
@@ -1166,7 +1478,8 @@
                 const mouseX = x * scaleX;
                 const mouseY = y * scaleY;
                 
-                let hoveredFacility = null;
+                let hoveredItem = null;
+                let isAnimal = false;
                 
                 // Verificar si el mouse está sobre alguna instalación
                 for (const facility of parkFacilities) {
@@ -1175,20 +1488,40 @@
                     );
                     
                     if (distance <= facility.radius) {
-                        hoveredFacility = facility;
+                        hoveredItem = facility;
                         break;
                     }
                 }
                 
+                // Si no está sobre una instalación, verificar animales
+                if (!hoveredItem) {
+                    for (const animal of parkAnimals) {
+                        const distance = Math.sqrt(
+                            Math.pow(mouseX - animal.x, 2) + Math.pow(mouseY - animal.y, 2)
+                        );
+                        
+                        if (distance <= 15) { // Radio de los círculos de animales
+                            hoveredItem = animal;
+                            isAnimal = true;
+                            break;
+                        }
+                    }
+                }
+                
                 // Mostrar u ocultar tooltip
-                if (hoveredFacility) {
+                if (hoveredItem) {
                     if (!tooltip) {
                         tooltip = document.createElement('div');
                         tooltip.className = 'zone-tooltip';
                         document.body.appendChild(tooltip);
                     }
                     
-                    tooltip.textContent = `${hoveredFacility.id}. ${hoveredFacility.name}`;
+                    if (isAnimal) {
+                        tooltip.textContent = `${hoveredItem.id}. ${hoveredItem.name} ${hoveredItem.icon}`;
+                    } else {
+                        tooltip.textContent = `${hoveredItem.id}. ${hoveredItem.name}`;
+                    }
+                    
                     tooltip.style.left = `${event.clientX + 10}px`;
                     tooltip.style.top = `${event.clientY + 10}px`;
                     tooltip.style.display = 'block';
